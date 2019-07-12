@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane fx:id="AP_Parcelamento" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="759.0" prefWidth="863.0" style="-fx-background-color: #B0C4DE;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.ParcelamentoController">
+   <children>
+      <Text fx:id="txtRendas" fill="#030303" layoutX="9.0" layoutY="14.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-background-color: #cfd1d0;" text="Atenção! Os campos listados na ferramenta são apenas os passíveis da captura automatizada. O restante das questões com preenchimento manual estão no documento Word gerado." wrappingWidth="863.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="2.0" AnchorPane.topAnchor="5.0">
+         <font>
+            <Font name="Open Sans Bold" size="13.0" />
+         </font>
+      </Text>
+      <Text fx:id="txtRendas1" fill="#030303" layoutX="2.0" layoutY="85.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-background-color: #cfd1d0;" text="3 – Informações sobre a operação de pagamento parcelado da fatura do cartão:" wrappingWidth="863.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="2.0">
+         <font>
+            <Font name="Open Sans Bold" size="13.0" />
+         </font>
+      </Text>
+      <TableView fx:id="tableParcelamento" layoutX="14.0" layoutY="110.0" prefHeight="200.0" prefWidth="851.0" tableMenuButtonVisible="true" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
+         <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+         </columnResizePolicy>
+         <columns>
+            <TableColumn fx:id="col_NumOperacao" editable="false" prefWidth="75.0" text="Número Operação" />
+            <TableColumn fx:id="col_TipoOperacao" prefWidth="75.0" text="Tipo Operação" />
+            <TableColumn fx:id="col_DataContratacao" prefWidth="75.0" text="Data Contratação" />
+            <TableColumn fx:id="col_QuantidadeParcela" prefWidth="75.0" text="Quantidade parcelas" />
+            <TableColumn fx:id="col_ValorParcela" prefWidth="75.0" text="Valor parcela" />
+            <TableColumn fx:id="col_ValorTotal" prefWidth="75.0" text="Valor Total" />
+            <TableColumn fx:id="col_CanalContratacao" prefWidth="75.0" text="Forma de Contratação" />
+         </columns>
+      </TableView>
+      <Text fx:id="txt_Doc21" fill="#030303" layoutX="2.0" layoutY="358.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-background-color: #cfd1d0;" text="7 - Documentos essenciais para a defesa do Banco, conforme o caso (ATENÇÃO: o rol abaixo listado não é taxativo, a depender dos fatos alegados pelo autor, outros documentos deverão ser apresentados):" wrappingWidth="863.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="2.0">
+         <font>
+            <Font name="Open Sans Bold" size="13.0" />
+         </font>
+      </Text>
+      <GridPane layoutX="14.0" layoutY="390.0" pickOnBounds="false" prefHeight="280.0" prefWidth="823.0">
+         <children>
+            <CheckBox fx:id="cbDoc1" mnemonicParsing="false" text="• Cláusulas gerais do contrato de emissão e utilização dos cartões Banco do Brasil S.A.">
+               <font>
+                  <Font name="Open Sans" size="12.0" />
+               </font>
+            </CheckBox>
+            <CheckBox fx:id="cbDoc2" mnemonicParsing="false" text="• Cláusulas Gerais do Contrato de Abertura de Crédito Rotativo – CDC Automático." GridPane.rowIndex="1">
+               <font>
+                  <Font name="Open Sans" size="12.0" />
+               </font>
+            </CheckBox>
+            <CheckBox fx:id="cbDoc4" mnemonicParsing="false" text="• Extrato da operação de pagamento parcelado da fatura (PPF), se contratação automática." GridPane.rowIndex="3">
+               <font>
+                  <Font name="Open Sans" size="12.0" />
+               </font>
+            </CheckBox>
+            <CheckBox fx:id="cbDoc3" mnemonicParsing="false" prefHeight="76.0" prefWidth="823.0" text="• Comprovante com log da contratação da operação (mobile/internet/TAA/CABB) de pagamento parcelado da fatura (PPF), se contratação solicitada pelo cliente." wrapText="true" GridPane.rowIndex="2">
+               <font>
+                  <Font name="Open Sans" size="12.0" />
+               </font>
+            </CheckBox>
+            <CheckBox fx:id="cbDoc5" mnemonicParsing="false" prefHeight="48.0" prefWidth="823.0" text="• Extrato da fatura do cartão de crédito do mês anterior ao parcelamento, no qual fique demonstrado a utilização do rotativo e/ou o pagamento inferior ao valor mínimo*." wrapText="true" GridPane.rowIndex="4">
+               <font>
+                  <Font name="Open Sans" size="12.0" />
+               </font>
+            </CheckBox>
+            <CheckBox fx:id="cbDoc7" mnemonicParsing="false" text="• Ocorrência no BB Atende, se houver." GridPane.rowIndex="6">
+               <font>
+                  <Font name="Open Sans" size="12.0" />
+               </font>
+            </CheckBox>
+            <CheckBox fx:id="cbDoc6" mnemonicParsing="false" text="• Extrato da conta corrente, no qual fique demonstrado o pagamento do valor de entrada do parcelamento e parcelas subsequentes, se for o caso*." wrapText="true" GridPane.rowIndex="5">
+               <font>
+                  <Font name="Open Sans" size="12.0" />
+               </font>
+            </CheckBox>
+         </children>
+         <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints maxHeight="40.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="30.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+         </rowConstraints>
+      </GridPane>
+      <JFXButton fx:id="btn_GerarWordParcelamento" buttonType="RAISED" layoutX="701.0" layoutY="677.0" onAction="#geraSumulaParcelamento" prefHeight="30.0" prefWidth="136.0" style="-fx-background-color: #fff646;" text="Gerar Súmula" textFill="LIGHTSLATEGRAY" AnchorPane.bottomAnchor="52.0" AnchorPane.leftAnchor="701.0" AnchorPane.rightAnchor="26.0">
+         <font>
+            <Font name="Open Sans Bold" size="14.0" />
+         </font>
+      </JFXButton>
+   </children>
+</AnchorPane>

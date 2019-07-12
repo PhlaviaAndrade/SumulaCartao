@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--<?import CurrencyField.?>-->
+
+<?import CurrencyField.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.image.*?>
+<?import com.jfoenix.controls.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<!--<?import view.CurrencyField?>-->
+
+<AnchorPane id="AnchorPane" fx:id="AnchorPanePrincipal" prefHeight="893.0" prefWidth="1324.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.TelaPrincipalController">
+   <children>
+      <SplitPane dividerPositions="0.34493192133131617" layoutX="474.0" layoutY="265.0" prefHeight="893.0" prefWidth="1324.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <items>
+          <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="906.0" prefWidth="453.0" style="-fx-background-color: #fff646;">
+               <children>
+                  <ScrollPane fx:id="ScrollPaneEsquerdo" layoutY="32.0" prefHeight="859.0" prefWidth="453.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="32.0">
+                     <content>
+                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="900.0" prefWidth="480.0" style="-fx-background-color: #2E9AFE;">
+                           <children>
+                              <JFXTextField fx:id="txt_NPJ" focusColor="#fff41e" labelFloat="true" layoutX="14.0" layoutY="14.0" prefHeight="30.0" prefWidth="144.0" promptText="NPJ" style="-fx-background-color: #2E9AFE; -fx-prompt-text-fill: #fff646; -fx-text-fill: white;" unFocusColor="#fff646">
+                                 <font>
+                                    <Font name="Open Sans Bold" size="14.0" />
+                                 </font>
+                              </JFXTextField>
+                              <JFXTextField fx:id="txt_CPF" focusColor="#fff41e" labelFloat="true" layoutX="269.0" layoutY="14.0" prefHeight="30.0" prefWidth="120.0" promptText="CPF" style="-fx-background-color: #2E9AFE; -fx-prompt-text-fill: #fff646; -fx-text-fill: white;" unFocusColor="#fff646">
+                                 <font>
+                                    <Font name="Open Sans Bold" size="14.0" />
+                                 </font>
+                              </JFXTextField>
+                              <JFXButton fx:id="btn_BusNpj" buttonType="RAISED" layoutX="300.0" layoutY="74.0" onAction="#pegaInformacoesIniciais" prefHeight="25.0" prefWidth="89.0" style="-fx-background-color: #fff646;" text="Buscar" textFill="LIGHTSLATEGRAY">
+                                 <font>
+                                    <Font name="Open Sans Bold" size="14.0" />
+                                 </font>
+                              </JFXButton>
+                              <GridPane layoutX="14.0" layoutY="133.0" prefHeight="134.0" prefWidth="392.0">
+                                <columnConstraints>
+                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                </columnConstraints>
+                                <rowConstraints>
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                </rowConstraints>
+                                 <children>
+                                    <JFXCheckBox fx:id="cb_ParcelamentoFatura" checkedColor="#9ac0cd" onAction="#ParcelamentoFatura" text="Parcelamento de fatura" textFill="WHITE" unCheckedColor="#fff646">
+                                       <font>
+                                          <Font name="Open Sans Bold" size="14.0" />
+                                       </font>
+                                    </JFXCheckBox>
+                                    <JFXCheckBox fx:id="cb_Bloqueio" checkedColor="#9fb6cd" onAction="#Bloqueio" text="Bloqueio ou restrição ao uso" textFill="WHITE" unCheckedColor="#fff646" GridPane.rowIndex="1">
+                                       <font>
+                                          <Font name="Open Sans Bold" size="14.0" />
+                                       </font>
+                                    </JFXCheckBox>
+                                    <JFXCheckBox fx:id="cb_Generico" checkedColor="#a2b5cd" onAction="#Generico" text="Genérico" textFill="WHITE" unCheckedColor="#fff646" GridPane.rowIndex="2">
+                                       <font>
+                                          <Font name="Open Sans Bold" size="14.0" />
+                                       </font>
+                                    </JFXCheckBox>
+                                    <JFXCheckBox fx:id="cb_NaoReconhecida" checkedColor="#6ca6cd" onAction="#NaoReconhecido" text="Transações não reconhecidas" textFill="WHITE" unCheckedColor="#fff646" GridPane.rowIndex="3">
+                                       <font>
+                                          <Font name="Open Sans Bold" size="14.0" />
+                                       </font>
+                                    </JFXCheckBox>
+                                 </children>
+                              </GridPane>
+                              <JFXButton fx:id="btn_buscarTable" buttonType="RAISED" layoutX="277.0" layoutY="278.0" onAction="#pegaDadosTabela" prefHeight="30.0" prefWidth="136.0" style="-fx-background-color: #fff646;" text="Efetuar captura" textFill="LIGHTSLATEGRAY">
+                                 <font>
+                                    <Font name="Open Sans Bold" size="14.0" />
+                                 </font>
+                              </JFXButton>
+                              <ImageView fx:id="imageView" fitHeight="228.0" fitWidth="200.0" layoutX="277.0" layoutY="647.0" pickOnBounds="true" preserveRatio="true" />
+                           </children>
+                        </AnchorPane>
+                     </content>
+                  </ScrollPane>
+                  <JFXTextField fx:id="txtChave" editable="false" focusColor="#fff646" layoutX="14.0" layoutY="2.0" style="-fx-text-fill: black; -fx-font-weight: bold;" unFocusColor="#fff646" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="308.0" />
+                  <TextField editable="false" layoutX="376.0" layoutY="1.0" prefHeight="28.0" prefWidth="77.0" style="-fx-background-color: #fff646;" text="#interna" AnchorPane.rightAnchor="0.0">
+                     <font>
+                        <Font name="Open Sans Bold" size="13.0" />
+                     </font>
+                  </TextField>
+               </children>
+            </AnchorPane>
+          <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="0.0" minWidth="0.0" prefHeight="891.0" prefWidth="870.0">
+               <children>
+                  <AnchorPane layoutY="-10.0" prefHeight="115.0" prefWidth="888.0" style="-fx-background-color: #fff646;" AnchorPane.bottomAnchor="786.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="-25.0" AnchorPane.topAnchor="-10.0">
+                     <children>
+                        <JFXTextField fx:id="txt_Autor" editable="false" focusColor="BLACK" labelFloat="true" layoutX="35.0" layoutY="43.0" prefHeight="30.0" prefWidth="486.0" promptText="Autor" style="-fx-background-color: #fff646; -fx-prompt-text-fill: black; -fx-text-fill: black;" unFocusColor="BLACK" AnchorPane.bottomAnchor="42.0" AnchorPane.leftAnchor="35.0" AnchorPane.rightAnchor="367.0" AnchorPane.topAnchor="43.0">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </JFXTextField>
+                     </children></AnchorPane>
+                  <TabPane fx:id="tabPane" layoutY="104.0" prefHeight="788.0" prefWidth="863.0" tabClosingPolicy="UNAVAILABLE">
+                    <tabs>
+                      <Tab fx:id="tabInformacoes" text="Informações">
+                        <content>
+                          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="721.0" prefWidth="863.0">
+                                 <children>
+                                    <TableView fx:id="tableDadosGerais" editable="true" layoutX="9.0" layoutY="11.0" prefHeight="314.0" prefWidth="853.0" tableMenuButtonVisible="true" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0">
+                                      <columns>
+                                          <TableColumn fx:id="colDadosGerais_Selecao" maxWidth="2000.0" prefWidth="76.0" text="Seleção" />
+                                        <TableColumn fx:id="colDadosGerais_Conta" prefWidth="168.0" text="Conta" />
+                                          <TableColumn fx:id="colDadosGerais_TipoPlastico" prefWidth="75.0" text="Tipo de plástico" />
+                                          <TableColumn fx:id="colDadosGerais_NrCartao" prefWidth="75.0" text="Nr. Cartão" />
+                                          <TableColumn fx:id="colDadosGerais_NomePlastico" prefWidth="75.0" text="Nome do plástico" />
+                                          <TableColumn fx:id="colDadosGerais_Restricao" prefWidth="75.0" text="Restrição" />
+                                          <TableColumn fx:id="colDadosGerais_Vencido" prefWidth="75.0" text="Vencido" />
+                                      </columns>
+                                       <columnResizePolicy>
+                                          <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                       </columnResizePolicy>
+                                    </TableView>
+                                    <Label layoutX="5.0" layoutY="354.0" prefHeight="17.0" prefWidth="807.0" text="Para súmula de Bloqueio ou restrição ao uso informar a(s) data(s) e o(s) valor(es) da(s) operação(oes) contestada(s) no processo." AnchorPane.leftAnchor="5.0">
+                                       <font>
+                                          <Font name="Open Sans" size="13.0" />
+                                       </font>
+                                    </Label>
+                                    <TableView fx:id="table_DataValor" layoutX="195.0" layoutY="407.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.leftAnchor="195.0">
+                                      <columns>
+                                        <TableColumn fx:id="colData_Bloqueio" prefWidth="75.0" text="Data" />
+                                        <TableColumn fx:id="colValor_Bloqueio" prefWidth="75.0" text="Valor" />
+                                      </columns>
+                                       <columnResizePolicy>
+                                          <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                       </columnResizePolicy>
+                                    </TableView>
+                                    <TextField fx:id="txtData" layoutX="14.0" layoutY="407.0" onKeyTyped="#inputDataKeyTyped" promptText="Data" />
+                                    <CurrencyField fx:id="txtValor" layoutX="14.0" layoutY="449.0" promptText="Valor" />
+                                    <JFXButton fx:id="btn_InserirDataValor" buttonType="RAISED" layoutX="74.0" layoutY="514.0" onAction="#montaTabelaDataValor" prefHeight="25.0" prefWidth="89.0" style="-fx-background-color: #fff646;" text="Inserir" textFill="LIGHTSLATEGRAY">
+                                       <font>
+                                          <Font name="Open Sans Bold" size="14.0" />
+                                       </font>
+                                    </JFXButton>
+                                    <JFXButton fx:id="btn_ExcluirDataValor" buttonType="RAISED" layoutX="74.0" layoutY="574.0" onAction="#excluiTabelaDataValor" prefHeight="25.0" prefWidth="89.0" style="-fx-background-color: #fff646;" text="Excluir" textFill="LIGHTSLATEGRAY">
+                                       <font>
+                                          <Font name="Open Sans Bold" size="14.0" />
+                                       </font>
+                                    </JFXButton>
+                                    <TableView fx:id="table_DatasBloqueio" layoutX="627.0" layoutY="407.0" prefHeight="200.0" prefWidth="200.0">
+                                       <columnResizePolicy>
+                                          <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                       </columnResizePolicy>
+                                       <columns>
+                                          <TableColumn fx:id="colDataInicio_Bloqueio" prefWidth="75.0" text="Data Início" />
+                                          <TableColumn fx:id="colDataFim_Bloqueio" prefWidth="75.0" text="Data Fim" />
+                                       </columns>
+                                    </TableView>
+                                    <TextField fx:id="txtDataInicio" layoutX="442.0" layoutY="407.0" onKeyTyped="#inputDataKeyTypedDataInicial" promptText="Data Início" />
+                                    <TextField fx:id="txtDataFim" layoutX="442.0" layoutY="449.0" onKeyTyped="#inputDataKeyTypedDataFinal" promptText="Data Fim" />
+                                    <JFXButton fx:id="btn_InserirDatas" buttonType="RAISED" layoutX="502.0" layoutY="514.0" onAction="#montaTabelaDatas" prefHeight="25.0" prefWidth="89.0" style="-fx-background-color: #fff646;" text="Inserir" textFill="LIGHTSLATEGRAY">
+                                       <font>
+                                          <Font name="Open Sans Bold" size="14.0" />
+                                       </font>
+                                    </JFXButton>
+                                    <JFXButton fx:id="btn_ExcluirDatas" buttonType="RAISED" layoutX="502.0" layoutY="574.0" onAction="#excluiTabelaDatas" prefHeight="25.0" prefWidth="89.0" style="-fx-background-color: #fff646;" text="Excluir" textFill="LIGHTSLATEGRAY">
+                                       <font>
+                                          <Font name="Open Sans Bold" size="14.0" />
+                                       </font>
+                                    </JFXButton>
+                                 </children>
+                              </AnchorPane>
+                        </content>
+                      </Tab>
+                      <Tab fx:id="tab_ParcelamentoFatura" text="Parcelamento de Fatura">
+                        <content>
+                          <AnchorPane fx:id="AP_ParcelamentoFatura" minHeight="0.0" minWidth="0.0" prefHeight="759.0" prefWidth="863.0" />
+                        </content>
+                      </Tab>
+                        <Tab fx:id="tab_BloqueioRestricao" text="Bloqueio ou restrição ao uso">
+                           <content>
+                              <AnchorPane fx:id="AP_BloqueioRestricao" minHeight="0.0" minWidth="0.0" prefHeight="759.0" prefWidth="863.0" />
+                           </content>
+                        </Tab>
+                    </tabs>
+                  </TabPane>
+               </children>
+            </AnchorPane>
+        </items>
+      </SplitPane>
+   </children>
+</AnchorPane>
