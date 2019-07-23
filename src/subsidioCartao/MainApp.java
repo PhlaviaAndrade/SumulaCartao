@@ -159,6 +159,8 @@ public class MainApp extends Application {
         }
         return controller;
     }
+    
+    
 
     
      public AbstractController showCenterAnchorPaneWithReturnScrollPane(String path, AbstractController controller, AnchorPane a) {

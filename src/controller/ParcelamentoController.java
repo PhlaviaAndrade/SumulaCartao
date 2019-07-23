@@ -34,6 +34,17 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import poi.PagamentoParcelado;
 import controller.TelaPrincipalController;
 import dao.ConsultaSQL;
+import java.util.ArrayList;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableListBase;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TableColumn.CellDataFeatures;
+import javafx.scene.control.cell.CheckBoxTableCell;
+import model.DadosIniciais;
+import model.RestricoesParcelamento;
+import model.RestricoesTerceiros;
 import org.apache.xmlbeans.XmlException;
 
 /**
@@ -65,14 +76,8 @@ public class ParcelamentoController extends AbstractController implements Initia
     public TableColumn<ParcelamentoFatura, String> col_CanalContratacao;
     @FXML
     public Text txt_Doc21;
-
-    public ObservableList<ParcelamentoFatura> observableListParcelamento;
     @FXML
     public TableView<ParcelamentoFatura> tableParcelamento;
-    public TelaPrincipalController tp;
-    ConsultaSQL consultaSQL = new ConsultaSQL();
-    
-    public CapturaParcelamentoFatura pc;
     @FXML
     private JFXButton btn_GerarWordParcelamento;
     @FXML
@@ -89,14 +94,59 @@ public class ParcelamentoController extends AbstractController implements Initia
     private CheckBox cbDoc7;
     @FXML
     private CheckBox cbDoc6;
+     @FXML
+    private CheckBox cbDoc8;
+    @FXML
+    private CheckBox cbDoc9;
+    @FXML
+    private CheckBox cbDoc10;    
+    @FXML
+    private Text txt_Doc211;
+    @FXML
+    private TableView<RestricoesParcelamento> tableRestricoes;
+    @FXML
+    private TableColumn<RestricoesParcelamento, String> restCol_Tipo;
+    @FXML
+    private TableColumn<RestricoesParcelamento, String> restCol_Valor;
+    @FXML
+    private TableColumn<RestricoesParcelamento, String> restCol_Data;
+    @FXML
+    private TableColumn<RestricoesParcelamento, String> restCol_Modalidade;
+    @FXML
+    private TableColumn<RestricoesParcelamento, String> restCol_Baixa;
+    @FXML
+    private Text txt_Doc2111;
+    @FXML
+    private TableView<RestricoesTerceiros> table_RestricoesTerceiros;
+    @FXML
+    private TableColumn<RestricoesTerceiros, Boolean> colTerceiros_selecao;
+    @FXML
+    private TableColumn<RestricoesTerceiros, String> colTerceiros_Tipo;
+    @FXML
+    private TableColumn<RestricoesTerceiros, String> colTerceiros_DtaRegistro;
+    @FXML
+    private TableColumn<RestricoesTerceiros, String> colTerceiros_DtaBaixa;
 
     utils util = new utils();
     String cpf;
     String npj;
     String autor;
     String matricula;
+    String dataRestFim;
+    String dataRestInicio;
+    boolean restTudo;
     
-     
+    Thread t1;
+    Thread t2;
+
+    public TelaPrincipalController tp;
+    ConsultaSQL consultaSQL = new ConsultaSQL();
+    CapturaParcelamentoFatura pc = new CapturaParcelamentoFatura();
+   ObservableList<ParcelamentoFatura> observableListParcelamento = FXCollections.observableArrayList();
+   ObservableList<RestricoesParcelamento> observableListRestricao = FXCollections.observableArrayList();
+   ObservableList<RestricoesTerceiros> observableListTerceiros = FXCollections.observableArrayList();
+   
+
     /**
      * Initializes the controller class.
      */
@@ -110,18 +160,26 @@ public class ParcelamentoController extends AbstractController implements Initia
         col_ValorParcela.setCellValueFactory(new PropertyValueFactory<>("valorParcela"));
         col_ValorTotal.setCellValueFactory(new PropertyValueFactory<>("valorTotal"));
         col_CanalContratacao.setCellValueFactory(new PropertyValueFactory<>("canalContratacao"));
-        pc = new CapturaParcelamentoFatura();
-        
+
+        restCol_Tipo.setCellValueFactory(new PropertyValueFactory<>("tipo"));
+        restCol_Valor.setCellValueFactory(new PropertyValueFactory<>("valor"));
+        restCol_Data.setCellValueFactory(new PropertyValueFactory<>("dtaRegistro"));
+        restCol_Modalidade.setCellValueFactory(new PropertyValueFactory<>("modalidade"));
+        restCol_Baixa.setCellValueFactory(new PropertyValueFactory<>("dtaBaixa"));
+
     }
 
-    public void capturaParcelamento(String matricula, List listaOperacoesCaptura, String cpf, String npj, String autor, JanelaSisbb sisbb, TelaPrincipalController tp) throws PropertyVetoException, Throwable {
+    public void capturaParcelamento(String matricula, List listaOperacoesCaptura, String cpf, String npj, String autor, JanelaSisbb sisbb, TelaPrincipalController tp, String dataRestFim, String dataRestInicio, boolean restTudo) throws PropertyVetoException, Throwable {
 
         this.cpf = cpf;
         this.npj = npj;
         this.autor = autor;
         this.tp = tp;
         this.matricula = matricula;
-        
+        this.dataRestFim = dataRestFim;
+        this.dataRestInicio = dataRestInicio;
+        this.restTudo = restTudo;
+
         if (sisbb == null) {
 
             sisbb = new JanelaSisbb();;
@@ -135,7 +193,45 @@ public class ParcelamentoController extends AbstractController implements Initia
 
         try {
 
+            if (!observableListParcelamento.isEmpty()) {
+                observableListParcelamento.clear();
+            }
+
             observableListParcelamento = FXCollections.observableList(pc.capturaParcelamento(sisbb, matricula, listaOperacoesCaptura, cpf));
+
+            observableListRestricao = FXCollections.observableList(pc.restricoes(sisbb, cpf, listaOperacoesCaptura));
+
+            if (!observableListRestricao.isEmpty()) {
+                tableRestricoes.setItems(observableListRestricao);
+
+            }
+
+            observableListTerceiros = FXCollections.observableList(pc.restricoesTerceiros(sisbb, cpf, dataRestFim, dataRestInicio, restTudo));
+
+            if (!observableListTerceiros.isEmpty()) {
+
+                colTerceiros_selecao.setCellValueFactory(new PropertyValueFactory<>("selected"));
+                colTerceiros_Tipo.setCellValueFactory(new PropertyValueFactory<>("tipo"));
+                colTerceiros_DtaRegistro.setCellValueFactory(new PropertyValueFactory<>("dtaRegistro"));
+                colTerceiros_DtaBaixa.setCellValueFactory(new PropertyValueFactory<>("dtaBaixa"));
+                colTerceiros_selecao.setCellFactory(CheckBoxTableCell.forTableColumn(colTerceiros_selecao));
+
+                colTerceiros_selecao.setCellValueFactory((CellDataFeatures<RestricoesTerceiros, Boolean> param) -> {
+                    RestricoesTerceiros dados = param.getValue();
+                    SimpleBooleanProperty booleanProp = new SimpleBooleanProperty(dados.isSelected());
+                    booleanProp.addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
+                        dados.setSelected(newValue);
+                    });
+                    return booleanProp;
+                });
+                colTerceiros_selecao.setCellFactory((TableColumn<RestricoesTerceiros, Boolean> p) -> {
+                    CheckBoxTableCell<RestricoesTerceiros, Boolean> cell = new CheckBoxTableCell<>();
+                    return cell;
+                });
+
+                table_RestricoesTerceiros.setItems(observableListTerceiros);
+
+            }
 
             if (!observableListParcelamento.isEmpty()) {
                 tableParcelamento.setItems(observableListParcelamento);
@@ -154,9 +250,12 @@ public class ParcelamentoController extends AbstractController implements Initia
                 Platform.runLater(() -> {
 
                     util.alertaGeral("Atenção", "Cliente sem parcelamento nas operações selecionadas", "Gentileza verificar os dados!");
+                    
 
                 });
-
+                
+                sisbb.rotinaEncerramento();
+                sisbb = null;
             }
 
         } catch (Exception e) {
@@ -168,18 +267,57 @@ public class ParcelamentoController extends AbstractController implements Initia
     @FXML
     private void geraSumulaParcelamento(ActionEvent event) throws FileNotFoundException, InvalidFormatException, IOException, PropertyVetoException, XmlException, Throwable {
 
+         t1 = new Thread(() -> {
+             
+             try {
+                 
+                 List<RestricoesTerceiros> data = new ArrayList<>();
+                 List<RestricoesTerceiros> listaRestricoesTerceiros = new ArrayList<>();
+                 
+                 if (!data.isEmpty()) {
+                     data.clear();
+                 }
+                 
+                 data = table_RestricoesTerceiros.getItems();
+                 
+                 for (RestricoesTerceiros t : data) {
+                     if (t.isSelected()) {
+                         listaRestricoesTerceiros.add(t);
+                     }
+                 }
+                 
+                 try {
+                     consultaSQL.inserir(npj, matricula, "Pagamento Parcelado");
+                 } catch (Throwable ex) {
+                     Logger.getLogger(ParcelamentoController.class.getName()).log(Level.SEVERE, null, ex);
+                 }
+                 
+                 PagamentoParcelado wordParcelamento = new PagamentoParcelado();
+                 try {
+                     
+                     wordParcelamento.wordPagamentoParcelado(listaRestricoesTerceiros, observableListRestricao, observableListParcelamento, cpf, npj, autor, cbDoc1, cbDoc2, cbDoc3, cbDoc4, cbDoc5, cbDoc6, cbDoc7, cbDoc8, cbDoc9, cbDoc10);
+                     
+                     
+                 } catch (InvalidFormatException ex) {
+                     Logger.getLogger(ParcelamentoController.class.getName()).log(Level.SEVERE, null, ex);
+                 } catch (IOException ex) {
+                     Logger.getLogger(ParcelamentoController.class.getName()).log(Level.SEVERE, null, ex);
+                 } catch (XmlException ex) {
+                     Logger.getLogger(ParcelamentoController.class.getName()).log(Level.SEVERE, null, ex);
+                 }
+                 limparParcelamento();
+                 
+             } catch (PropertyVetoException ex) {
+                 Logger.getLogger(ParcelamentoController.class.getName()).log(Level.SEVERE, null, ex);
+             }
         
-        
-        consultaSQL.inserir(npj, matricula, "Pagamento Parcelado");
-        
-        PagamentoParcelado wordParcelamento = new PagamentoParcelado();
-        wordParcelamento.wordPagamentoParcelado(observableListParcelamento, cpf, npj, autor, cbDoc1, cbDoc2, cbDoc3, cbDoc4, cbDoc5, cbDoc6, cbDoc7);
-        limparParcelamento();
+         });
+
+        t1.start();
 
     }
-    
+
     private void limparParcelamento() throws PropertyVetoException {
-       
 
         cbDoc1.setSelected(false);
         cbDoc2.setSelected(false);
@@ -187,15 +325,16 @@ public class ParcelamentoController extends AbstractController implements Initia
         cbDoc3.setSelected(false);
         cbDoc5.setSelected(false);
         cbDoc7.setSelected(false);
-        cbDoc6.setSelected(false);
+        cbDoc8.setSelected(false);
+        cbDoc9.setSelected(false);
+        cbDoc10.setSelected(false);
         
-        
+
+        table_RestricoesTerceiros.getItems().clear();
+        tableRestricoes.getItems().clear();
         tableParcelamento.getItems().clear();
         tp.limparTelaPrincipalController();
-     
 
     }
-
-
 
 }

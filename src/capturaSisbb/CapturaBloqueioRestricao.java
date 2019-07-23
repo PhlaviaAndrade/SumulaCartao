@@ -237,6 +237,7 @@ public class CapturaBloqueioRestricao {
                                     }
                                 }
                                 linhaData++;
+                                
                                 if (linhaData == 21 || sisbb.copiar(linhaData, 8, 3).equals("")) {
                                     sisbb.teclarAguardarTroca("@8");
                                     linhaData = 11;

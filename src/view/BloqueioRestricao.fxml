@@ -7,181 +7,177 @@
 <?import javafx.scene.layout.*?>
 
 
-<ScrollPane fx:id="ScrollPane_Bloqueio" prefHeight="759.0" prefWidth="863.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.BloqueioController">
-   <content>
-      <AnchorPane fx:id="AP_Parcelamento" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1800.0" prefWidth="848.0" style="-fx-background-color: #6495ED;">
+<AnchorPane fx:id="AP_Parcelamento" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1800.0" prefWidth="847.0" style="-fx-background-color: #6495ED;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.BloqueioController">
+   <children>
+      <Text fx:id="txtRendas" fill="#030303" layoutX="9.0" layoutY="14.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-background-color: #cfd1d0;" text="Atenção! Os campos listados na ferramenta são apenas os passíveis da captura automatizada. O restante das questões com preenchimento manual estão no documento Word gerado." wrappingWidth="863.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="2.0" AnchorPane.topAnchor="5.0">
+         <font>
+            <Font name="Open Sans Bold" size="13.0" />
+         </font>
+      </Text>
+      <Text fx:id="txtRendas1" fill="#030303" layoutX="2.0" layoutY="85.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-background-color: #cfd1d0;" text="3 – Qual a causa da não autorização da transação ou do bloqueio da função crédito do cartão?" wrappingWidth="863.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="2.0">
+         <font>
+            <Font name="Open Sans Bold" size="13.0" />
+         </font>
+      </Text>
+      <Text fx:id="txt_Doc21" fill="#030303" layoutX="7.0" layoutY="1358.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-background-color: #cfd1d0;" text="7 - Documentos essenciais para a defesa do Banco, conforme o caso (ATENÇÃO: o rol abaixo listado não é taxativo, a depender dos fatos alegados pelo autor, outros documentos deverão ser apresentados):" wrappingWidth="863.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="2.0">
+         <font>
+            <Font name="Open Sans Bold" size="13.0" />
+         </font>
+      </Text>
+      <GridPane layoutX="14.0" layoutY="1393.0" pickOnBounds="false" prefHeight="251.0" prefWidth="823.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="2.0">
          <children>
-            <Text fx:id="txtRendas" fill="#030303" layoutX="9.0" layoutY="14.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-background-color: #cfd1d0;" text="Atenção! Os campos listados na ferramenta são apenas os passíveis da captura automatizada. O restante das questões com preenchimento manual estão no documento Word gerado." wrappingWidth="863.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="2.0" AnchorPane.topAnchor="5.0">
+            <CheckBox fx:id="cbDoc1" mnemonicParsing="false" text="• Cláusulas gerais do contrato de emissão e utilização dos cartões Banco do Brasil S.A.">
                <font>
-                  <Font name="Open Sans Bold" size="13.0" />
+                  <Font name="Open Sans" size="12.0" />
                </font>
-            </Text>
-            <Text fx:id="txtRendas1" fill="#030303" layoutX="2.0" layoutY="85.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-background-color: #cfd1d0;" text="3 – Qual a causa da não autorização da transação ou do bloqueio da função crédito do cartão?" wrappingWidth="863.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="2.0">
+            </CheckBox>
+            <CheckBox fx:id="cbDoc2" mnemonicParsing="false" text="• Cláusulas Gerais do Contrato de Abertura de Crédito Rotativo – CDC Automático." GridPane.rowIndex="1">
                <font>
-                  <Font name="Open Sans Bold" size="13.0" />
+                  <Font name="Open Sans" size="12.0" />
                </font>
-            </Text>
-            <Text fx:id="txt_Doc21" fill="#030303" layoutX="7.0" layoutY="1358.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-background-color: #cfd1d0;" text="7 - Documentos essenciais para a defesa do Banco, conforme o caso (ATENÇÃO: o rol abaixo listado não é taxativo, a depender dos fatos alegados pelo autor, outros documentos deverão ser apresentados):" wrappingWidth="863.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="2.0">
+            </CheckBox>
+            <CheckBox fx:id="cbDoc4" mnemonicParsing="false" text="• Extrato da operação de pagamento parcelado da fatura (PPF), se contratação automática." GridPane.rowIndex="3">
                <font>
-                  <Font name="Open Sans Bold" size="13.0" />
+                  <Font name="Open Sans" size="12.0" />
                </font>
-            </Text>
-            <GridPane layoutX="14.0" layoutY="1393.0" pickOnBounds="false" prefHeight="251.0" prefWidth="823.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="2.0">
-               <children>
-                  <CheckBox fx:id="cbDoc1" mnemonicParsing="false" text="• Cláusulas gerais do contrato de emissão e utilização dos cartões Banco do Brasil S.A.">
-                     <font>
-                        <Font name="Open Sans" size="12.0" />
-                     </font>
-                  </CheckBox>
-                  <CheckBox fx:id="cbDoc2" mnemonicParsing="false" text="• Cláusulas Gerais do Contrato de Abertura de Crédito Rotativo – CDC Automático." GridPane.rowIndex="1">
-                     <font>
-                        <Font name="Open Sans" size="12.0" />
-                     </font>
-                  </CheckBox>
-                  <CheckBox fx:id="cbDoc4" mnemonicParsing="false" text="• Extrato da operação de pagamento parcelado da fatura (PPF), se contratação automática." GridPane.rowIndex="3">
-                     <font>
-                        <Font name="Open Sans" size="12.0" />
-                     </font>
-                  </CheckBox>
-                  <CheckBox fx:id="cbDoc3" mnemonicParsing="false" prefHeight="76.0" prefWidth="823.0" text="• Comprovante com log da contratação da operação (mobile/internet/TAA/CABB) de pagamento parcelado da fatura (PPF), se contratação solicitada pelo cliente." wrapText="true" GridPane.rowIndex="2">
-                     <font>
-                        <Font name="Open Sans" size="12.0" />
-                     </font>
-                  </CheckBox>
-                  <CheckBox fx:id="cbDoc5" mnemonicParsing="false" prefHeight="48.0" prefWidth="823.0" text="• Extrato da fatura do cartão de crédito do mês anterior ao parcelamento, no qual fique demonstrado a utilização do rotativo e/ou o pagamento inferior ao valor mínimo*." wrapText="true" GridPane.rowIndex="4">
-                     <font>
-                        <Font name="Open Sans" size="12.0" />
-                     </font>
-                  </CheckBox>
-                  <CheckBox fx:id="cbDoc7" mnemonicParsing="false" text="• Ocorrência no BB Atende, se houver." GridPane.rowIndex="6">
-                     <font>
-                        <Font name="Open Sans" size="12.0" />
-                     </font>
-                  </CheckBox>
-                  <CheckBox fx:id="cbDoc6" mnemonicParsing="false" text="• Extrato da conta corrente, no qual fique demonstrado o pagamento do valor de entrada do parcelamento e parcelas subsequentes, se for o caso*." wrapText="true" GridPane.rowIndex="5">
-                     <font>
-                        <Font name="Open Sans" size="12.0" />
-                     </font>
-                  </CheckBox>
-               </children>
-               <columnConstraints>
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-               </columnConstraints>
-               <rowConstraints>
-                  <RowConstraints maxHeight="35.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints maxHeight="35.0" minHeight="0.0" prefHeight="36.0" vgrow="SOMETIMES" />
-                  <RowConstraints maxHeight="35.0" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
-                  <RowConstraints maxHeight="35.0" minHeight="10.0" prefHeight="39.0" vgrow="SOMETIMES" />
-                  <RowConstraints maxHeight="35.0" minHeight="10.0" prefHeight="33.0" vgrow="SOMETIMES" />
-                  <RowConstraints maxHeight="35.0" minHeight="10.0" prefHeight="41.0" vgrow="SOMETIMES" />
-                  <RowConstraints maxHeight="35.0" minHeight="5.0" prefHeight="15.0" vgrow="SOMETIMES" />
-               </rowConstraints>
-            </GridPane>
-            <JFXButton fx:id="btn_GerarWordParcelamento" buttonType="RAISED" layoutX="701.0" layoutY="677.0" onAction="#geraSumulaBloqueio" prefHeight="30.0" prefWidth="136.0" style="-fx-background-color: #fff646;" text="Gerar Súmula" textFill="LIGHTSLATEGRAY" AnchorPane.bottomAnchor="52.0" AnchorPane.leftAnchor="701.0" AnchorPane.rightAnchor="26.0">
+            </CheckBox>
+            <CheckBox fx:id="cbDoc3" mnemonicParsing="false" prefHeight="76.0" prefWidth="823.0" text="• Comprovante com log da contratação da operação (mobile/internet/TAA/CABB) de pagamento parcelado da fatura (PPF), se contratação solicitada pelo cliente." wrapText="true" GridPane.rowIndex="2">
                <font>
-                  <Font name="Open Sans Bold" size="14.0" />
+                  <Font name="Open Sans" size="12.0" />
                </font>
-            </JFXButton>
-            <Text fx:id="txt_Restricao1" fill="#030303" layoutX="3.0" layoutY="606.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-background-color: #cfd1d0;" text="4 – Em caso de anotação em cadastros restritivos, detalhar as restrições do cliente que deram causa ao bloqueio (ATENÇÃO: especificar tipo de restrição, instituição responsável pela anotação, valores e data do registro)" wrappingWidth="847.0" AnchorPane.leftAnchor="3.0" AnchorPane.rightAnchor="-2.0">
+            </CheckBox>
+            <CheckBox fx:id="cbDoc5" mnemonicParsing="false" prefHeight="48.0" prefWidth="823.0" text="• Extrato da fatura do cartão de crédito do mês anterior ao parcelamento, no qual fique demonstrado a utilização do rotativo e/ou o pagamento inferior ao valor mínimo*." wrapText="true" GridPane.rowIndex="4">
                <font>
-                  <Font name="Open Sans Bold" size="13.0" />
+                  <Font name="Open Sans" size="12.0" />
                </font>
-            </Text>
-            <TableView fx:id="tableBloqueio_restricoes" layoutX="12.0" layoutY="646.0" prefHeight="200.0" prefWidth="822.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="2.0">
-               <columnResizePolicy>
-                  <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-               </columnResizePolicy>
-               <columns>
-                  <TableColumn fx:id="colBloqueio_Instituicao" prefWidth="10.0" text="Instituição responsável pela anotação (BB ou terceiros)" />
-                  <TableColumn fx:id="colBloqueio_Valor" prefWidth="149.0" text="Valor envolvido" />
-                  <TableColumn fx:id="colBloqueio_DtaRegistro" prefWidth="75.0" text="Data do registro" />
-                  <TableColumn fx:id="colBloqueio_Tipo" prefWidth="75.0" text="Tipo (Serasa, SCPC, CCF, Cadin etc.)" />
-               </columns>
-            </TableView>
-            <Text fx:id="txt_Restricao11" fill="#030303" layoutX="2.0" layoutY="879.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-background-color: #cfd1d0;" text="5 – O cliente foi previamente comunicado pelo Banco sobre a possibilidade de bloqueio do cartão?" wrappingWidth="863.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="2.0">
+            </CheckBox>
+            <CheckBox fx:id="cbDoc7" mnemonicParsing="false" text="• Ocorrência no BB Atende, se houver." GridPane.rowIndex="6">
                <font>
-                  <Font name="Open Sans Bold" size="13.0" />
+                  <Font name="Open Sans" size="12.0" />
                </font>
-            </Text>
-            <Text fx:id="txt_Restricao111" fill="#030303" layoutX="2.0" layoutY="1057.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-background-color: #cfd1d0;" text="8 – Em caso de transação não autorizada em razão de insuficiência de limite de crédito, detalhar a data da ocorrência, o valor envolvido e  o limite disponível no cartão à época" wrappingWidth="849.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="-3.0">
+            </CheckBox>
+            <CheckBox fx:id="cbDoc6" mnemonicParsing="false" text="• Extrato da conta corrente, no qual fique demonstrado o pagamento do valor de entrada do parcelamento e parcelas subsequentes, se for o caso*." wrapText="true" GridPane.rowIndex="5">
                <font>
-                  <Font name="Open Sans Bold" size="13.0" />
+                  <Font name="Open Sans" size="12.0" />
                </font>
-            </Text>
-            <Text fx:id="txt_Restricao1111" fill="#030303" layoutX="-1.0" layoutY="1321.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-background-color: #cfd1d0;" text="11 – Independente da situação que deu causa ao bloqueio, informar se a função crédito do cartão permanece bloqueada:" wrappingWidth="863.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="2.0">
-               <font>
-                  <Font name="System Bold" size="13.0" />
-               </font>
-            </Text>
-            <GridPane layoutX="26.0" layoutY="97.0" prefHeight="193.0" prefWidth="613.0" AnchorPane.leftAnchor="5.0">
-              <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-              </columnConstraints>
-              <rowConstraints>
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-              </rowConstraints>
-               <children>
-                  <JFXCheckBox fx:id="cbBloqueio_Anotacao" checkedColor="#fff646" text="Anotação em cadastros restritivos (Serasa, SCPC, CCF, Cadin etc.) " unCheckedColor="#a1a5a8">
-                     <font>
-                        <Font name="Open Sans" size="12.0" />
-                     </font>
-                  </JFXCheckBox>
-                  <JFXCheckBox fx:id="cbBloqueio_LimiteInsuficiente" checkedColor="#fff646" text="Limite de crédito insuficiente para o valor da transação" unCheckedColor="#a1a5a8" GridPane.rowIndex="2">
-                     <font>
-                        <Font name="Open Sans" size="12.0" />
-                     </font>
-                  </JFXCheckBox>
-                  <JFXCheckBox fx:id="cbBloqueio_LimiteVigente" checkedColor="#fff646" text="Limite de crédito não vigente (cadastro pendente ou desatualizado" unCheckedColor="#a1a5a8" GridPane.rowIndex="1">
-                     <font>
-                        <Font name="Open Sans" size="12.0" />
-                     </font>
-                  </JFXCheckBox>
-                  <JFXCheckBox fx:id="cbBloqueio_Fraude" checkedColor="#fff646" text="Prevenção de fraudes ²" unCheckedColor="#a1a5a8" GridPane.rowIndex="3">
-                     <font>
-                        <Font name="Open Sans" size="12.0" />
-                     </font>
-                  </JFXCheckBox>
-                  <JFXCheckBox fx:id="cbBloqueio_CartaoVencido" checkedColor="#fff646" text="Cartão vencido" unCheckedColor="#a1a5a8" GridPane.rowIndex="4">
-                     <font>
-                        <Font name="Open Sans" size="12.0" />
-                     </font>
-                  </JFXCheckBox>
-                  <JFXCheckBox fx:id="cbBloqueio_Outros" checkedColor="#fff646" text="Outros" unCheckedColor="#a1a5a8" GridPane.rowIndex="5">
-                     <font>
-                        <Font name="Open Sans" size="12.0" />
-                     </font>
-                  </JFXCheckBox>
-               </children>
-            </GridPane>
-            <TableView fx:id="tableBloqueio_Transacoes" editable="true" layoutX="-2.0" layoutY="1094.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="2.0">
-              <columns>
-                <TableColumn fx:id="colBloqueio_DtaOcorrencia" prefWidth="75.0" text="Data da ocorrência" />
-                <TableColumn fx:id="colBloqueio_ValorCompra" prefWidth="75.0" text="Valor da compra" />
-                  <TableColumn fx:id="colBloqueio_ValorLimite" prefWidth="75.0" text="Valor do limite disponível" />
-                  <TableColumn fx:id="colBloqueio_Motivo" prefWidth="75.0" text="Motivo" />
-              </columns>
-               <columnResizePolicy>
-                  <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-               </columnResizePolicy>
-            </TableView>
-            <TableView fx:id="tableBloqueio_Motivos" layoutX="2.0" layoutY="306.0" prefHeight="262.0" prefWidth="844.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="2.0">
-              <columns>
-                  <TableColumn fx:id="colMotivos_Plastico" prefWidth="75.0" text="Plástico" />
-                <TableColumn fx:id="colMotivos_Data" prefWidth="75.0" text="Data" />
-                <TableColumn fx:id="colMotivos_Valor" prefWidth="75.0" text="Valor" />
-                  <TableColumn fx:id="colMotivos_Resposta" prefWidth="75.0" text="Resposta" />
-                  <TableColumn fx:id="colMotivos_RazaoRecusa" prefWidth="75.0" text="Razão Recusa" />
-              </columns>
-               <columnResizePolicy>
-                  <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-               </columnResizePolicy>
-            </TableView>
+            </CheckBox>
          </children>
-      </AnchorPane>
-   </content>
-</ScrollPane>
+         <columnConstraints>
+            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+         </columnConstraints>
+         <rowConstraints>
+            <RowConstraints maxHeight="35.0" minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="35.0" minHeight="0.0" prefHeight="36.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="35.0" minHeight="10.0" prefHeight="40.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="35.0" minHeight="10.0" prefHeight="39.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="35.0" minHeight="10.0" prefHeight="33.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="35.0" minHeight="10.0" prefHeight="41.0" vgrow="SOMETIMES" />
+            <RowConstraints maxHeight="35.0" minHeight="5.0" prefHeight="15.0" vgrow="SOMETIMES" />
+         </rowConstraints>
+      </GridPane>
+      <JFXButton fx:id="btn_GerarWordParcelamento" buttonType="RAISED" layoutX="701.0" layoutY="677.0" onAction="#geraSumulaBloqueio" prefHeight="30.0" prefWidth="136.0" style="-fx-background-color: #fff646;" text="Gerar Súmula" textFill="LIGHTSLATEGRAY" AnchorPane.bottomAnchor="52.0" AnchorPane.leftAnchor="701.0" AnchorPane.rightAnchor="26.0">
+         <font>
+            <Font name="Open Sans Bold" size="14.0" />
+         </font>
+      </JFXButton>
+      <Text fx:id="txt_Restricao1" fill="#030303" layoutX="3.0" layoutY="606.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-background-color: #cfd1d0;" text="4 – Em caso de anotação em cadastros restritivos, detalhar as restrições do cliente que deram causa ao bloqueio (ATENÇÃO: especificar tipo de restrição, instituição responsável pela anotação, valores e data do registro)" wrappingWidth="847.0" AnchorPane.leftAnchor="3.0" AnchorPane.rightAnchor="-2.0">
+         <font>
+            <Font name="Open Sans Bold" size="13.0" />
+         </font>
+      </Text>
+      <TableView fx:id="tableBloqueio_restricoes" layoutX="12.0" layoutY="646.0" prefHeight="200.0" prefWidth="822.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="2.0">
+         <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+         </columnResizePolicy>
+         <columns>
+            <TableColumn fx:id="colBloqueio_Instituicao" prefWidth="10.0" text="Instituição responsável pela anotação (BB ou terceiros)" />
+            <TableColumn fx:id="colBloqueio_Valor" prefWidth="149.0" text="Valor envolvido" />
+            <TableColumn fx:id="colBloqueio_DtaRegistro" prefWidth="75.0" text="Data do registro" />
+            <TableColumn fx:id="colBloqueio_Tipo" prefWidth="75.0" text="Tipo (Serasa, SCPC, CCF, Cadin etc.)" />
+         </columns>
+      </TableView>
+      <Text fx:id="txt_Restricao11" fill="#030303" layoutX="2.0" layoutY="879.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-background-color: #cfd1d0;" text="5 – O cliente foi previamente comunicado pelo Banco sobre a possibilidade de bloqueio do cartão?" wrappingWidth="863.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="2.0">
+         <font>
+            <Font name="Open Sans Bold" size="13.0" />
+         </font>
+      </Text>
+      <Text fx:id="txt_Restricao111" fill="#030303" layoutX="2.0" layoutY="1057.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-background-color: #cfd1d0;" text="8 – Em caso de transação não autorizada em razão de insuficiência de limite de crédito, detalhar a data da ocorrência, o valor envolvido e  o limite disponível no cartão à época" wrappingWidth="849.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="-3.0">
+         <font>
+            <Font name="Open Sans Bold" size="13.0" />
+         </font>
+      </Text>
+      <Text fx:id="txt_Restricao1111" fill="#030303" layoutX="-1.0" layoutY="1321.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-background-color: #cfd1d0;" text="11 – Independente da situação que deu causa ao bloqueio, informar se a função crédito do cartão permanece bloqueada:" wrappingWidth="863.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="2.0">
+         <font>
+            <Font name="System Bold" size="13.0" />
+         </font>
+      </Text>
+      <GridPane layoutX="26.0" layoutY="97.0" prefHeight="193.0" prefWidth="613.0" AnchorPane.leftAnchor="5.0">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <JFXCheckBox fx:id="cbBloqueio_Anotacao" checkedColor="#fff646" text="Anotação em cadastros restritivos (Serasa, SCPC, CCF, Cadin etc.) " unCheckedColor="#a1a5a8">
+               <font>
+                  <Font name="Open Sans" size="12.0" />
+               </font>
+            </JFXCheckBox>
+            <JFXCheckBox fx:id="cbBloqueio_LimiteInsuficiente" checkedColor="#fff646" text="Limite de crédito insuficiente para o valor da transação" unCheckedColor="#a1a5a8" GridPane.rowIndex="2">
+               <font>
+                  <Font name="Open Sans" size="12.0" />
+               </font>
+            </JFXCheckBox>
+            <JFXCheckBox fx:id="cbBloqueio_LimiteVigente" checkedColor="#fff646" text="Limite de crédito não vigente (cadastro pendente ou desatualizado" unCheckedColor="#a1a5a8" GridPane.rowIndex="1">
+               <font>
+                  <Font name="Open Sans" size="12.0" />
+               </font>
+            </JFXCheckBox>
+            <JFXCheckBox fx:id="cbBloqueio_Fraude" checkedColor="#fff646" text="Prevenção de fraudes ²" unCheckedColor="#a1a5a8" GridPane.rowIndex="3">
+               <font>
+                  <Font name="Open Sans" size="12.0" />
+               </font>
+            </JFXCheckBox>
+            <JFXCheckBox fx:id="cbBloqueio_CartaoVencido" checkedColor="#fff646" text="Cartão vencido" unCheckedColor="#a1a5a8" GridPane.rowIndex="4">
+               <font>
+                  <Font name="Open Sans" size="12.0" />
+               </font>
+            </JFXCheckBox>
+            <JFXCheckBox fx:id="cbBloqueio_Outros" checkedColor="#fff646" text="Outros" unCheckedColor="#a1a5a8" GridPane.rowIndex="5">
+               <font>
+                  <Font name="Open Sans" size="12.0" />
+               </font>
+            </JFXCheckBox>
+         </children>
+      </GridPane>
+      <TableView fx:id="tableBloqueio_Transacoes" editable="true" layoutX="-2.0" layoutY="1094.0" prefHeight="200.0" prefWidth="200.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="2.0">
+        <columns>
+          <TableColumn fx:id="colBloqueio_DtaOcorrencia" prefWidth="75.0" text="Data da ocorrência" />
+          <TableColumn fx:id="colBloqueio_ValorCompra" prefWidth="75.0" text="Valor da compra" />
+            <TableColumn fx:id="colBloqueio_ValorLimite" prefWidth="75.0" text="Valor do limite disponível" />
+            <TableColumn fx:id="colBloqueio_Motivo" prefWidth="75.0" text="Motivo" />
+        </columns>
+         <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+         </columnResizePolicy>
+      </TableView>
+      <TableView fx:id="tableBloqueio_Motivos" layoutX="2.0" layoutY="306.0" prefHeight="262.0" prefWidth="844.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="2.0">
+        <columns>
+            <TableColumn fx:id="colMotivos_Plastico" prefWidth="75.0" text="Plástico" />
+          <TableColumn fx:id="colMotivos_Data" prefWidth="75.0" text="Data" />
+          <TableColumn fx:id="colMotivos_Valor" prefWidth="75.0" text="Valor" />
+            <TableColumn fx:id="colMotivos_Resposta" prefWidth="75.0" text="Resposta" />
+            <TableColumn fx:id="colMotivos_RazaoRecusa" prefWidth="75.0" text="Razão Recusa" />
+        </columns>
+         <columnResizePolicy>
+            <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+         </columnResizePolicy>
+      </TableView>
+   </children>
+</AnchorPane>

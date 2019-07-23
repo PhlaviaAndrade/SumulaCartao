@@ -138,8 +138,6 @@ public class BloqueioController extends AbstractController implements Initializa
     private TableColumn<TransacaoNaoAutorizada, String> colMotivos_RazaoRecusa;
     @FXML
     private TableColumn<TransacaoNaoAutorizada, String> colMotivos_Plastico;
-    @FXML
-    private ScrollPane ScrollPane_Bloqueio;
 
     /**
      * Initializes the controller class.

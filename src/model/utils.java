@@ -18,29 +18,31 @@ import javafx.scene.control.TextField;
  */
 public class utils {
     
-     public boolean validarEntradaDados(String cpf,String npj) {
-         
-        String errorMessage = "";
+    public boolean validarEntradaDados(String cpf, String npj) {
+
         
-        if (cpf == null || cpf.length() == 0 ||cpf.length() < 11 || npj == null || npj.length() == 0) {
-            errorMessage += "Digite o NPJ e o CPF com valores númericos e quantidade suficiente de dígitos";
 
-        }
+            String errorMessage = "";
 
-        if (errorMessage.length() == 0) {
-            return true;
+            if (cpf == null || cpf.length() == 0 || cpf.length() < 11 || npj == null || npj.length() == 0) {
+                errorMessage += "Digite o NPJ e o CPF com valores númericos e quantidade suficiente de dígitos";
 
-        } else {
-            //mostrando a mensagem de erro
-            
-              
-            alertaValidacao(errorMessage);
-               
-              
-                return false;
-           
+            }
 
-        }
+            if (errorMessage.length() == 0) {
+                return true;
+
+            } else {
+                //mostrando a mensagem de erro
+
+                alertaValidacao(errorMessage);
+            }
+       
+        
+        
+
+        return false;
+
     }
 
       public void alertaValidacao(String p) {

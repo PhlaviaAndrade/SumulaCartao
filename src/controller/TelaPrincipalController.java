@@ -44,6 +44,8 @@ import model.BloqueioDataValor;
 import CurrencyField.CurrencyField;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import model.BloqueioDatasCaptura;
 import model.TextFieldFormatter;
 import subsidioCartao.MainApp;
@@ -165,6 +167,12 @@ public class TelaPrincipalController implements Initializable {
     private JFXButton btn_InserirDatas;
     @FXML
     private JFXButton btn_ExcluirDatas;
+    @FXML
+    private TextField txt_DataFimRestricao;
+    @FXML
+    private TextField txt_DataInicioRestricao;
+    @FXML
+    private JFXCheckBox cb_CapturarTudoRestricao;
 
     public TelaPrincipalController() throws PropertyVetoException {
 
@@ -185,6 +193,10 @@ public class TelaPrincipalController implements Initializable {
         txtDataFim.setText("01.07.2019");
 
         CurrencyField cur = new CurrencyField();
+
+        ScrollPane sp = new ScrollPane();
+        sp.setContent(sp);
+
 
 // Usando esta property você pode ver as mudanças no valor do textfield
         cur.amountProperty().addListener(new ChangeListener<Number>() {
@@ -216,9 +228,9 @@ public class TelaPrincipalController implements Initializable {
                 cpf = txt_CPF.getText().trim().replace(".", "").replace("-", "");
                 npj = txt_NPJ.getText().trim().replace(".", "").replace("-", "");
 
-                Platform.runLater(() -> {
+              
 
-                    if (util.validarEntradaDados(cpf, npj)) {
+                    if (cpf != null && cpf.length() != 0 && cpf.length() == 11 && npj != null && npj.length() != 0) {
 
                         try {
                             //                    JanelaSisbb sisbb = new JanelaSisbb();
@@ -280,12 +292,23 @@ public class TelaPrincipalController implements Initializable {
                             util.alertaGeralInformacao("Atenção", "Captura finalizada!", null);
 
                         } else {
+                            
+                              Platform.runLater(() -> {
 
                             util.alertaGeral("Atenção", "CPF incorreto ou o cliente não possui lançamentos.", "Gentileza verificar os dados");
+                
+                 });
 
                         }
+                    }else{
+                        
+                        Platform.runLater(() -> { 
+                      util.alertaValidacao("Digite o NPJ e o CPF com valores númericos e quantidade suficiente de dígitos");
+                       }); 
+                        
+                        
                     }
-                });
+               
 
             } catch (Exception e) {
                 System.out.println(e);
@@ -301,10 +324,26 @@ public class TelaPrincipalController implements Initializable {
 
     @FXML
     private void pegaDadosTabela(ActionEvent event) throws Throwable {
-
+        
+        
+       
         t2 = new Thread(() -> {
+            
+        String dataRestInicio ="";
+        String dataRestFim = "";
+            
+            
+          if ((txt_DataInicioRestricao.getText().length() != 0 & txt_DataFimRestricao.getText().length() != 0 & txt_DataInicioRestricao.getText().trim().length() == 7 & txt_DataFimRestricao.getText().trim().length() == 7) || cb_CapturarTudoRestricao.isSelected() ) {
+             
+              dataRestInicio = txt_DataInicioRestricao.getText().replace("/", "");
+              dataRestFim = txt_DataFimRestricao.getText().replace("/", "");
+              boolean restTudo = cb_CapturarTudoRestricao.isSelected();
+              
+        
+            
             List<DadosIniciais> listaOperacoesCaptura = new ArrayList<>();
             List<DadosIniciais> data = new ArrayList<>();
+            
             if (!data.isEmpty()) {
                 data.clear();
             }
@@ -319,15 +358,19 @@ public class TelaPrincipalController implements Initializable {
             if (!listaOperacoesCaptura.isEmpty()) {
 
                 switch (sumula) {
+                    
+ //=======================================================Súmula Parcelamento=========================================================================                   
                     case 1: {
                         try {
-                            parcelamentoCaptura.capturaParcelamento(matricula, listaOperacoesCaptura, cpf, npj, autor, sisbb, this);
+                            parcelamentoCaptura.capturaParcelamento(matricula, listaOperacoesCaptura, cpf, npj, autor, sisbb, this, dataRestFim, dataRestInicio, restTudo);
                         } catch (Throwable ex) {
                             Logger.getLogger(TelaPrincipalController.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
 
                     break;
+                    
+ //=======================================================Súmula Bloqueio=========================================================================                         
                     case 2:
 
                         List<BloqueioDataValor> listaBloqueioDataValor = new ArrayList<>();
@@ -345,16 +388,34 @@ public class TelaPrincipalController implements Initializable {
                         }
 
                         break;
+                        
+ //=======================================================Súmula Transação não reconhecida =========================================================================                             
                     case 3:
+                        
+                        
+                        
                         break;
+                        
+ //=======================================================Súmula Genérica======================================================================================================     
+                        
                     case 4:
+                        
+                        
+                        
+                        
+                        
                         break;
                     default:
 
                         Platform.runLater(() -> {
+                            
                             util.validarSumula(cb_Bloqueio, cb_Generico, cb_NaoReconhecida, cb_ParcelamentoFatura);
                         });
                 }
+                
+                
+                
+                
 
             } else {
                 Platform.runLater(() -> {
@@ -363,6 +424,17 @@ public class TelaPrincipalController implements Initializable {
                 });
 
             }
+                        
+            
+           }else{
+                Platform.runLater(() -> {
+                util.alertaGeral("Atenção", "Verifique se a data possui todos os campos: mm.aaaa", "Verifique se todos os campos foram preenchidos!");
+                });
+          }    
+            
+            
+            
+            
 
         });
 
@@ -416,7 +488,7 @@ public class TelaPrincipalController implements Initializable {
         }
 
         String path = "/view/BloqueioRestricao.fxml";
-        bloqueioCaptura = (BloqueioController) mainApp.showCenterAnchorPaneWithReturnScrollPane(path, bloqueioCaptura, AP_BloqueioRestricao);
+        bloqueioCaptura = (BloqueioController) mainApp.showCenterAnchorPaneWithReturn(path, bloqueioCaptura, AP_BloqueioRestricao);
     }
 
     @FXML
@@ -470,6 +542,9 @@ public class TelaPrincipalController implements Initializable {
         cb_Generico.setSelected(false);
         cb_NaoReconhecida.setSelected(false);
         tableDadosGerais.getItems().clear();
+        cb_CapturarTudoRestricao.setSelected(false);
+        txt_DataFimRestricao.clear();
+        txt_DataInicioRestricao.clear();
     }
 
     @FXML
@@ -584,6 +659,46 @@ public class TelaPrincipalController implements Initializable {
 
         int linhaSelecionada = table_DatasBloqueio.getSelectionModel().getSelectedIndex();
         table_DatasBloqueio.getItems().remove(linhaSelecionada);
+    }
+
+    @FXML
+    private void inputDataKeyTypedDataFinalRestricao(KeyEvent event) {
+        
+        TextFieldFormatter tff = new TextFieldFormatter();
+        tff.setMask("##/####");
+        tff.setCaracteresValidos("0123456789");
+        tff.setTf(txt_DataFimRestricao);
+        tff.formatter();
+        
+    }
+
+    @FXML
+    private void inputDataKeyTypedDataInicialRestricao(KeyEvent event) {
+        
+        
+        TextFieldFormatter tff = new TextFieldFormatter();
+        tff.setMask("##/####");
+        tff.setCaracteresValidos("0123456789");
+        tff.setTf(txt_DataInicioRestricao);
+        tff.formatter();
+    }
+
+    @FXML
+    private void desabilitarDatasRest(MouseEvent event) {
+
+        if (cb_CapturarTudoRestricao.isSelected()) {
+
+            txt_DataInicioRestricao.setDisable(true);
+            txt_DataFimRestricao.setDisable(true);
+            txt_DataFimRestricao.clear();
+            txt_DataInicioRestricao.clear();
+
+        } else {
+
+            txt_DataInicioRestricao.setDisable(false);
+            txt_DataFimRestricao.setDisable(false);
+        }
+
     }
 
 }
