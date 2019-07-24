@@ -317,15 +317,17 @@ public class PagamentoParcelado {
                         r7.setFontSize(9);
                         para7.setSpacingAfterLines(6);
 
-                        XWPFParagraph detalhe = doc.createParagraph();
-                        detalhe.setAlignment(ParagraphAlignment.BOTH);
-                        XWPFRun rundetalhe = detalhe.createRun();
-                        rundetalhe.setBold(false);
-                        rundetalhe.setItalic(true);
-                        rundetalhe.setFontSize(8);
-                        rundetalhe.setText("²Informar se a operação de pagamento parcelado da fatura está em situação de normalidade ou em atraso. Consultar dados no aplicativo CDC e informações da fatura do cartão.");
-
+                    
                     }
+                    
+                       XWPFParagraph detalhe = doc.createParagraph();
+                    detalhe.setAlignment(ParagraphAlignment.BOTH);
+                    XWPFRun rundetalhe = detalhe.createRun();
+                    rundetalhe.setBold(false);
+                    rundetalhe.setItalic(true);
+                    rundetalhe.setFontSize(8);
+
+                    rundetalhe.setText("²Informar se a operação de pagamento parcelado da fatura está em situação de normalidade ou em atraso. Consultar dados no aplicativo CDC e informações da fatura do cartão.");
 
                 } else {
                     XWPFParagraph resposta3 = doc.createParagraph();

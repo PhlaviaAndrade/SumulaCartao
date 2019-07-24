@@ -15,6 +15,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import model.BloqueioCorrespondencia;
 import model.BloqueioDataValor;
 import model.BloqueioDatasCaptura;
 import model.ContaCartao;
@@ -220,16 +221,19 @@ public class CapturaBloqueioRestricao {
                                         sisbb.teclarAguardarTroca("@3");
                                         transNaoAutorizada.add(tn);
                                         sisbb.teclarAguardarTroca("@3");
+                                        
                                     } else {
                                         TransacaoNaoAutorizada tn = new TransacaoNaoAutorizada();
                                         sisbb.colar(linhaData, 4, "X");
+                                        tn.setPlastico(cartao);
+                                        tn.setDataOcorrencia(sisbb.copiar(linhaData, 8, 10));
                                         tn.setValorCompra(sisbb.copiar(linhaData, 46, 12).trim());
                                         sisbb.teclarAguardarTroca("@E");
                                         tn.setRazaoRecusa(sisbb.copiar(11, 63, 18).trim());
                                         tn.setResposta(sisbb.copiar(12, 17, 18).trim());
                                         tn.setVencimento(sisbb.copiar(6, 17, 12).trim());
                                         sisbb.teclarAguardarTroca("@9");
-                                        tn.setValorLimite(sisbb.copiar(12, 63, 8).trim());
+                                        tn.setValorLimite(sisbb.copiar(12, 65, 12).trim());
                                         sisbb.teclarAguardarTroca("@3");
                                         transNaoAutorizada.add(tn);
                                         sisbb.teclarAguardarTroca("@3");
@@ -247,6 +251,7 @@ public class CapturaBloqueioRestricao {
                                         }
 
                                         sisbb.teclarAguardarTroca("@9");
+                                        Thread.sleep(300);
                                     }
                                 }
                             } catch (RoboException | InterruptedException | NumberFormatException e) {
@@ -372,6 +377,83 @@ public class CapturaBloqueioRestricao {
 
     }
     
-    
+    public List comunicacaoCliente(String matricula, JanelaSisbb sisbb, String cpf) throws RoboException{
+        
+         List<BloqueioCorrespondencia> listaCorrespondencia = new ArrayList<>();
+        
+        
+       // sisbb.teclarAguardarTroca("@5");
+        sisbb.teclarAguardarTroca("@5");
+        sisbb.colar(15, 14, "INI");
+        sisbb.teclarAguardarTroca("@E");
+        sisbb.aguardarInd(1, 3, "INIM0000");
+        sisbb.colar(19, 25, "14");
+        sisbb.teclarAguardarTroca("@E");
+        sisbb.aguardarInd(1, 3, "MCIM001A");
+        sisbb.colar(12, 13, cpf);
+        sisbb.teclarAguardarTroca("@E");
+        sisbb.aguardarInd(5, 43, "Código");
+
+        int dataInicio = Integer.parseInt(sisbb.copiar(8, 75, 4));
+        dataInicio -= 5;
+
+        sisbb.colar(8, 75, String.valueOf(dataInicio));
+        sisbb.teclarAguardarTroca("@E");
+        
+
+        if (!sisbb.copiar(10, 42, 8).equals("Registro")) {
+            
+            sisbb.aguardarInd(1, 2, "INIM145D");
+
+            int linhaSistema = 7;
+            
+         do{
+             linhaSistema++;
+             BloqueioCorrespondencia bc = new BloqueioCorrespondencia();
+             
+               
+                if(linhaSistema == 20){
+                    sisbb.teclarAguardarTroca("@8");
+                    linhaSistema = 7;                  
+                   
+                    
+                } 
+                 
+            
+             if(sisbb.copiar(linhaSistema, 12, 6).equals("VIP576")){
+                 
+                 sisbb.colar(linhaSistema, 2, "X");
+                 sisbb.teclarAguardarTroca("@E");
+                 sisbb.aguardarInd(1, 2, "INIM145E");
+                 
+                 bc.setDtaPostagem(sisbb.copiar(8, 4, 77).trim());
+                 bc.setServicoECT(sisbb.copiar(11, 4, 77).trim());
+                 bc.setEndereco(cpf);
+                 String parte1 = sisbb.copiar(18, 36, 44).trim();
+                 String parte2 = sisbb.copiar(19, 4, 76).trim();
+                 String parte3 = sisbb.copiar(20, 4, 76).trim();
+                 bc.setEndereco(parte1 + ", " + parte2 + ", " + parte3);
+                 
+                 listaCorrespondencia.add(bc);
+                 
+                  sisbb.teclarAguardarTroca("@3");
+                 sisbb.aguardarInd(1, 2, "INIM145D");
+                 
+               
+               
+                 
+             }
+             
+             
+             
+             
+         }while(!sisbb.copiar(linhaSistema, 4, 3).equals(""));  
+           
+        
+           
+       }
+              
+        return listaCorrespondencia;
+    }
 
 }

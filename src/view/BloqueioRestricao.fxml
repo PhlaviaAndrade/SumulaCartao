@@ -6,7 +6,6 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-
 <AnchorPane fx:id="AP_Parcelamento" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1800.0" prefWidth="847.0" style="-fx-background-color: #6495ED;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.BloqueioController">
    <children>
       <Text fx:id="txtRendas" fill="#030303" layoutX="9.0" layoutY="14.0" strokeType="OUTSIDE" strokeWidth="0.0" style="-fx-background-color: #cfd1d0;" text="Atenção! Os campos listados na ferramenta são apenas os passíveis da captura automatizada. O restante das questões com preenchimento manual estão no documento Word gerado." wrappingWidth="863.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="2.0" AnchorPane.topAnchor="5.0">
@@ -179,5 +178,6 @@
             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
          </columnResizePolicy>
       </TableView>
+      <TextArea fx:id="txtCorrespondencia" editable="false" layoutX="14.0" layoutY="894.0" prefHeight="140.0" prefWidth="843.0" AnchorPane.leftAnchor="2.0" AnchorPane.rightAnchor="2.0" />
    </children>
 </AnchorPane>

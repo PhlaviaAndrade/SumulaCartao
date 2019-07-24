@@ -25,9 +25,11 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
+import model.BloqueioCorrespondencia;
 import model.BloqueioDataValor;
 import model.BloqueioDatasCaptura;
 import model.DadosIniciais;
@@ -46,7 +48,6 @@ public class BloqueioController extends AbstractController implements Initializa
     CapturaBloqueioRestricao capBloqueio = new CapturaBloqueioRestricao();
 
     public ObservableList<BloqueioDataValor> observableListBloqueio;
-    
 
     @FXML
     private AnchorPane AP_Parcelamento;
@@ -76,7 +77,7 @@ public class BloqueioController extends AbstractController implements Initializa
     private Text txt_Restricao1;
     @FXML
     private TableColumn<?, ?> colBloqueio_Instituicao;
-   
+
     @FXML
     private TableColumn<?, ?> colBloqueio_DtaRegistro;
     @FXML
@@ -98,7 +99,6 @@ public class BloqueioController extends AbstractController implements Initializa
     List listaOperacoesCaptura;
     List listaBloqueioDataValor;
     List listaBloqueioDatas;
-   
 
     @FXML
     private JFXCheckBox cbBloqueio_Anotacao;
@@ -124,7 +124,7 @@ public class BloqueioController extends AbstractController implements Initializa
     private TableColumn<TransacaoNaoAutorizada, String> colBloqueio_ValorLimite;
     @FXML
     private TableColumn<TransacaoNaoAutorizada, String> colBloqueio_Motivo;
-     @FXML
+    @FXML
     private TableColumn<TransacaoNaoAutorizada, String> colBloqueio_DtaOcorrencia;
     @FXML
     private TableView<TransacaoNaoAutorizada> tableBloqueio_Motivos;
@@ -138,6 +138,8 @@ public class BloqueioController extends AbstractController implements Initializa
     private TableColumn<TransacaoNaoAutorizada, String> colMotivos_RazaoRecusa;
     @FXML
     private TableColumn<TransacaoNaoAutorizada, String> colMotivos_Plastico;
+    @FXML
+    private TextArea txtCorrespondencia;
 
     /**
      * Initializes the controller class.
@@ -150,10 +152,13 @@ public class BloqueioController extends AbstractController implements Initializa
 
     public void capturaBloqueio(String matricula, List<BloqueioDataValor> listaBloqueioDataValor, List<DadosIniciais> listaOperacoesCaptura, List<BloqueioDatasCaptura> listaBloqueioDatas, String cpf, String npj, String autor, JanelaSisbb sisbb, TelaPrincipalController tp) throws PropertyVetoException, Throwable {
         ObservableList<TransacaoNaoAutorizada> observableListAutorizacao = null;
-         ObservableList<TransacaoNaoAutorizada> observableListSemLimite;
+        ObservableList<TransacaoNaoAutorizada> observableListSemLimite;
         List<TransacaoNaoAutorizada> transNaoAutorizada = new ArrayList<>();
-         List<TransacaoNaoAutorizada> transSemLimite = new ArrayList<>();
-         
+        List<TransacaoNaoAutorizada> transSemLimite = new ArrayList<>();
+        List<BloqueioCorrespondencia> listCorrespondencia = new ArrayList<>();
+        
+        String concatCorrespondencia = "";
+
         this.cpf = cpf;
         this.npj = npj;
         this.autor = autor;
@@ -180,53 +185,61 @@ public class BloqueioController extends AbstractController implements Initializa
                 cbBloqueio_Anotacao.setSelected(true);
             }
 
-                
             if (capBloqueio.creditoInsuficiente(matricula, listaBloqueioDataValor, listaBloqueioDatas, listaOperacoesCaptura, cpf, sisbb, tp, transNaoAutorizada, vencido, suspeitaFraude)) {
-                
-                
-                for (TransacaoNaoAutorizada t: transNaoAutorizada){
+
+                for (TransacaoNaoAutorizada t : transNaoAutorizada) {
                     String tipo = t.getResposta().substring(0, 2);
-                    if(tipo.equals("51")){
+                    if (tipo.equals("51")) {
                         transSemLimite.add(t);
-                        cbBloqueio_LimiteInsuficiente.setSelected(true);                        
+                        cbBloqueio_LimiteInsuficiente.setSelected(true);
                     }
-                    
-                    
+
                 }
 
                 colBloqueio_DtaOcorrencia.setCellValueFactory(new PropertyValueFactory<>("dataOcorrencia"));
                 colBloqueio_ValorCompra.setCellValueFactory(new PropertyValueFactory<>("valorCompra"));
                 colBloqueio_ValorLimite.setCellValueFactory(new PropertyValueFactory<>("valorLimite"));
                 colBloqueio_Motivo.setCellValueFactory(new PropertyValueFactory<>("resposta"));
-                
+
                 observableListSemLimite = FXCollections.observableList(transSemLimite);
-                tableBloqueio_Transacoes.setItems(observableListSemLimite);              
-               
-                 colMotivos_Data.setCellValueFactory(new PropertyValueFactory<>("dataOcorrencia"));
-                 colMotivos_RazaoRecusa.setCellValueFactory(new PropertyValueFactory<>("razaoRecusa"));
-                 colMotivos_Valor.setCellValueFactory(new PropertyValueFactory<>("valorCompra"));
-                 colMotivos_Resposta.setCellValueFactory(new PropertyValueFactory<>("resposta"));
-                 colMotivos_Plastico.setCellValueFactory(new PropertyValueFactory<>("plastico"));
-                 
-                 observableListAutorizacao = FXCollections.observableList(transNaoAutorizada);
-                 tableBloqueio_Motivos.setItems(observableListAutorizacao);
-             
+                tableBloqueio_Transacoes.setItems(observableListSemLimite);
+
+                colMotivos_Data.setCellValueFactory(new PropertyValueFactory<>("dataOcorrencia"));
+                colMotivos_RazaoRecusa.setCellValueFactory(new PropertyValueFactory<>("razaoRecusa"));
+                colMotivos_Valor.setCellValueFactory(new PropertyValueFactory<>("valorCompra"));
+                colMotivos_Resposta.setCellValueFactory(new PropertyValueFactory<>("resposta"));
+                colMotivos_Plastico.setCellValueFactory(new PropertyValueFactory<>("plastico"));
+
+                observableListAutorizacao = FXCollections.observableList(transNaoAutorizada);
+                tableBloqueio_Motivos.setItems(observableListAutorizacao);
+
             }
-            
-            capBloqueio.restricoes(matricula, sisbb, cpf);
-            
-            
-            
-            
-            
-            
-            
-            
-             Platform.runLater(() -> {
 
-                    util.alertaGeralInformacao("Atenção", "Captura finalizada com sucesso!", "Verifique os itens na tabela para gerar a súmula.");
+            // capBloqueio.restricoes(matricula, sisbb, cpf);
+            listCorrespondencia = capBloqueio.comunicacaoCliente(matricula, sisbb, cpf);
 
-                });
+            if(!listCorrespondencia.isEmpty()){
+            
+            
+            for (BloqueioCorrespondencia b : listCorrespondencia) {
+
+                String parte1 = b.getDtaPostagem();
+                String parte2 = b.getServicoECT();
+                String parte3 = b.getEndereco();
+                
+                concatCorrespondencia += parte1 + "\n" + parte2 + "\n" + parte3 + "\n" + "\n";
+                
+                
+            }
+            txtCorrespondencia.setText(concatCorrespondencia);
+            
+            }
+
+            Platform.runLater(() -> {
+
+                util.alertaGeralInformacao("Atenção", "Captura finalizada com sucesso!", "Verifique os itens na tabela para gerar a súmula.");
+
+            });
 
         } catch (RoboException e) {
         }
@@ -235,18 +248,13 @@ public class BloqueioController extends AbstractController implements Initializa
 
     @FXML
     private void geraSumulaBloqueio(ActionEvent event) throws Throwable {
-         ConsultaSQL consultaSQL = new ConsultaSQL();
-        
-          consultaSQL.inserir(npj, matricula, "Bloqueio ou Restrição ao uso");
-        
-        PagamentoParcelado wordParcelamento = new PagamentoParcelado();
-      //  wordParcelamento.wordPagamentoParcelado(observableListParcelamento, cpf, npj, autor, cbDoc1, cbDoc2, cbDoc3, cbDoc4, cbDoc5, cbDoc6, cbDoc7);
-        //limparParcelamento();
+        ConsultaSQL consultaSQL = new ConsultaSQL();
 
-        
-        
-        
-        
+        consultaSQL.inserir(npj, matricula, "Bloqueio ou Restrição ao uso");
+
+        PagamentoParcelado wordParcelamento = new PagamentoParcelado();
+        //  wordParcelamento.wordPagamentoParcelado(observableListParcelamento, cpf, npj, autor, cbDoc1, cbDoc2, cbDoc3, cbDoc4, cbDoc5, cbDoc6, cbDoc7);
+        //limparParcelamento();
 
     }
 
