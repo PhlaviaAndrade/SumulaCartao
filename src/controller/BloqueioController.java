@@ -16,16 +16,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
@@ -33,6 +35,9 @@ import model.BloqueioCorrespondencia;
 import model.BloqueioDataValor;
 import model.BloqueioDatasCaptura;
 import model.DadosIniciais;
+import model.RestricoesBB;
+import model.RestricoesReplicadas;
+import model.RestricoesTerceiros;
 import model.TransacaoNaoAutorizada;
 import model.utils;
 import poi.PagamentoParcelado;
@@ -76,13 +81,6 @@ public class BloqueioController extends AbstractController implements Initializa
     @FXML
     private Text txt_Restricao1;
     @FXML
-    private TableColumn<?, ?> colBloqueio_Instituicao;
-
-    @FXML
-    private TableColumn<?, ?> colBloqueio_DtaRegistro;
-    @FXML
-    private TableColumn<?, ?> colBloqueio_Valor;
-    @FXML
     private Text txt_Restricao11;
     @FXML
     private Text txt_Restricao111;
@@ -113,10 +111,6 @@ public class BloqueioController extends AbstractController implements Initializa
     @FXML
     private JFXCheckBox cbBloqueio_Outros;
     @FXML
-    private TableView<?> tableBloqueio_restricoes;
-    @FXML
-    private TableColumn<?, ?> colBloqueio_Tipo;
-    @FXML
     private TableView<TransacaoNaoAutorizada> tableBloqueio_Transacoes;
     @FXML
     private TableColumn<TransacaoNaoAutorizada, String> colBloqueio_ValorCompra;
@@ -140,6 +134,40 @@ public class BloqueioController extends AbstractController implements Initializa
     private TableColumn<TransacaoNaoAutorizada, String> colMotivos_Plastico;
     @FXML
     private TextArea txtCorrespondencia;
+    @FXML
+    private TableView<RestricoesBB> tb_RestricoesBB;
+    @FXML
+    private TableColumn<RestricoesBB, Boolean> colRestricoesBB_selecao;
+    @FXML
+    private TableColumn<RestricoesBB, String> colRestricoesBB_Tipo;
+    @FXML
+    private TableColumn<RestricoesBB, String> colRestricoesBB_Modalidade;
+    @FXML
+    private TableColumn<RestricoesBB, String> colRestricoesBB_Valor;
+    @FXML
+    private TableColumn<RestricoesBB, String> colRestricoesBB_dtaRegistro;
+    @FXML
+    private TableColumn<RestricoesBB, String> colRestricoesBB_dtaBaixa;
+    @FXML
+    private TableView<RestricoesTerceiros> tb_RestricoesTerceiros;
+    @FXML
+    private TableColumn<RestricoesTerceiros, Boolean> colTerceiros_selecao;
+    @FXML
+    private TableColumn<RestricoesTerceiros, String> colTerceiros_Tipo;
+    @FXML
+    private TableColumn<RestricoesTerceiros, String> colTerceiros_DtaRegistro;
+    @FXML
+    private TableColumn<RestricoesTerceiros, String> colTerceiros_DtaBaixa;
+    @FXML
+    private TableView<RestricoesReplicadas> tb_RestricoesReplicadas;
+    @FXML
+    private TableColumn<RestricoesReplicadas, Boolean> colReplicacoes_selecao;
+    @FXML
+    private TableColumn<RestricoesReplicadas, String> colReplicacoes_Tipo;
+    @FXML
+    private TableColumn<RestricoesReplicadas, String> colReplicacoes_DtaRegistro;
+    @FXML
+    private TableColumn<RestricoesReplicadas, String> colReplicacoes_DtaBaixa;
 
     /**
      * Initializes the controller class.
@@ -153,10 +181,12 @@ public class BloqueioController extends AbstractController implements Initializa
     public void capturaBloqueio(String matricula, List<BloqueioDataValor> listaBloqueioDataValor, List<DadosIniciais> listaOperacoesCaptura, List<BloqueioDatasCaptura> listaBloqueioDatas, String cpf, String npj, String autor, JanelaSisbb sisbb, TelaPrincipalController tp) throws PropertyVetoException, Throwable {
         ObservableList<TransacaoNaoAutorizada> observableListAutorizacao = null;
         ObservableList<TransacaoNaoAutorizada> observableListSemLimite;
+        ObservableList<RestricoesBB> observableListRestricoesBB;
+
         List<TransacaoNaoAutorizada> transNaoAutorizada = new ArrayList<>();
         List<TransacaoNaoAutorizada> transSemLimite = new ArrayList<>();
         List<BloqueioCorrespondencia> listCorrespondencia = new ArrayList<>();
-        
+
         String concatCorrespondencia = "";
 
         this.cpf = cpf;
@@ -218,23 +248,54 @@ public class BloqueioController extends AbstractController implements Initializa
             // capBloqueio.restricoes(matricula, sisbb, cpf);
             listCorrespondencia = capBloqueio.comunicacaoCliente(matricula, sisbb, cpf);
 
-            if(!listCorrespondencia.isEmpty()){
-            
-            
-            for (BloqueioCorrespondencia b : listCorrespondencia) {
+            if (!listCorrespondencia.isEmpty()) {
 
-                String parte1 = b.getDtaPostagem();
-                String parte2 = b.getServicoECT();
-                String parte3 = b.getEndereco();
-                
-                concatCorrespondencia += parte1 + "\n" + parte2 + "\n" + parte3 + "\n" + "\n";
-                
-                
-            }
-            txtCorrespondencia.setText(concatCorrespondencia);
-            
+                for (BloqueioCorrespondencia b : listCorrespondencia) {
+
+                    String parte1 = b.getDtaPostagem();
+                    String parte2 = b.getServicoECT();
+                    String parte3 = b.getEndereco();
+
+                    concatCorrespondencia += parte1 + "\n" + parte2 + "\n" + parte3 + "\n" + "\n";
+
+                }
+                txtCorrespondencia.setText(concatCorrespondencia);
+
             }
 
+            if (!(observableListRestricoesBB = FXCollections.observableList(capBloqueio.restricoesBB(sisbb, cpf))).isEmpty()) {
+
+                colRestricoesBB_selecao.setCellValueFactory(new PropertyValueFactory<>("selected"));
+                colRestricoesBB_Modalidade.setCellValueFactory(new PropertyValueFactory<>("modalidade"));
+                colRestricoesBB_Valor.setCellValueFactory(new PropertyValueFactory<>("valor"));                
+                colRestricoesBB_Tipo.setCellValueFactory(new PropertyValueFactory<>("tipo"));
+                colRestricoesBB_dtaRegistro.setCellValueFactory(new PropertyValueFactory<>("dtaRegistro"));
+                colRestricoesBB_dtaBaixa.setCellValueFactory(new PropertyValueFactory<>("dtaBaixa"));
+                colRestricoesBB_selecao.setCellFactory(CheckBoxTableCell.forTableColumn(colRestricoesBB_selecao));
+
+                colRestricoesBB_selecao.setCellValueFactory((TableColumn.CellDataFeatures<RestricoesBB, Boolean> param) -> {
+                    RestricoesBB dados = param.getValue();
+                    SimpleBooleanProperty booleanProp = new SimpleBooleanProperty(dados.isSelected());
+                    booleanProp.addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
+                        dados.setSelected(newValue);
+                    });
+                    return booleanProp;
+                });
+                colTerceiros_selecao.setCellFactory((TableColumn<RestricoesTerceiros, Boolean> p) -> {
+                    CheckBoxTableCell<RestricoesTerceiros, Boolean> cell = new CheckBoxTableCell<>();
+                    return cell;
+                });
+
+                tb_RestricoesBB.setItems(observableListRestricoesBB);
+
+            } 
+            
+            
+            
+            
+            
+            
+            
             Platform.runLater(() -> {
 
                 util.alertaGeralInformacao("Atenção", "Captura finalizada com sucesso!", "Verifique os itens na tabela para gerar a súmula.");

@@ -43,7 +43,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TableColumn.CellDataFeatures;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import model.DadosIniciais;
-import model.RestricoesParcelamento;
+import model.RestricoesBB;
 import model.RestricoesTerceiros;
 import org.apache.xmlbeans.XmlException;
 
@@ -103,17 +103,17 @@ public class ParcelamentoController extends AbstractController implements Initia
     @FXML
     private Text txt_Doc211;
     @FXML
-    private TableView<RestricoesParcelamento> tableRestricoes;
+    private TableView<RestricoesBB> tableRestricoes;
     @FXML
-    private TableColumn<RestricoesParcelamento, String> restCol_Tipo;
+    private TableColumn<RestricoesBB, String> restCol_Tipo;
     @FXML
-    private TableColumn<RestricoesParcelamento, String> restCol_Valor;
+    private TableColumn<RestricoesBB, String> restCol_Valor;
     @FXML
-    private TableColumn<RestricoesParcelamento, String> restCol_Data;
+    private TableColumn<RestricoesBB, String> restCol_Data;
     @FXML
-    private TableColumn<RestricoesParcelamento, String> restCol_Modalidade;
+    private TableColumn<RestricoesBB, String> restCol_Modalidade;
     @FXML
-    private TableColumn<RestricoesParcelamento, String> restCol_Baixa;
+    private TableColumn<RestricoesBB, String> restCol_Baixa;
     @FXML
     private Text txt_Doc2111;
     @FXML
@@ -143,7 +143,7 @@ public class ParcelamentoController extends AbstractController implements Initia
     ConsultaSQL consultaSQL = new ConsultaSQL();
     CapturaParcelamentoFatura pc = new CapturaParcelamentoFatura();
    ObservableList<ParcelamentoFatura> observableListParcelamento = FXCollections.observableArrayList();
-   ObservableList<RestricoesParcelamento> observableListRestricao = FXCollections.observableArrayList();
+   ObservableList<RestricoesBB> observableListRestricao = FXCollections.observableArrayList();
    ObservableList<RestricoesTerceiros> observableListTerceiros = FXCollections.observableArrayList();
    
 

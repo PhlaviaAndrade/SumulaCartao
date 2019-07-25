@@ -20,6 +20,7 @@ import model.BloqueioDataValor;
 import model.BloqueioDatasCaptura;
 import model.ContaCartao;
 import model.DadosIniciais;
+import model.RestricoesBB;
 import model.TransacaoNaoAutorizada;
 
 /**
@@ -277,106 +278,128 @@ public class CapturaBloqueioRestricao {
     }
     
     
-    public void restricoes (String matricula, JanelaSisbb sisbb, String cpf) throws RoboException, Throwable{
-        
-        sisbb.teclar("@5");
+    public List restricoesBB(JanelaSisbb sisbb, String cpf) throws RoboException, InterruptedException {
 
-        sisbb.colar(15, 14, "Clientes");
+        List<RestricoesBB> listRestricoesBB = new ArrayList<>();
+
+        String opcaoTipo = "01";
+        
+        sisbb.teclarAguardarTroca("@5");
+        sisbb.colar(15, 14, "CLIENTES");
         sisbb.aguardarInd(1, 2, "SBBP6130");
-        
-          if (sisbb.copiar(5, 38, 7).equals("ATENÇÃO")) {
-            sisbb.teclarAguardarTroca("@3");
-            Thread.sleep(300);
-        }
-
-        if (sisbb.copiar(3, 36, 10).equals("Comunicado")) {
-            sisbb.teclarAguardarTroca("@E");
-            Thread.sleep(300);
-        }
-        
-        
         sisbb.colar(21, 20, "01");
-        sisbb.teclar("@E");
-        sisbb.aguardarInd(1, 8, "MCIM0000");
+        sisbb.teclarAguardarTroca("@E");
         sisbb.colar(19, 18, "01");
-        sisbb.teclar("@E");
-        sisbb.aguardarInd(1, 8, "MCIM001A");
+        sisbb.teclarAguardarTroca("@E");
         sisbb.colar(12, 13, cpf);
-        sisbb.teclar("@E");
-
+        sisbb.teclarAguardarTroca("@E");
         sisbb.colar(21, 41, "14");
         sisbb.teclarAguardarTroca("@E");
-        sisbb.aguardarInd(1, 3, "ACPM140B");
         
-        int linhaImpedimento = 10;
-        
-        while(!sisbb.copiar(linhaImpedimento, 6, 2).equals("")){
+        while(!opcaoTipo.equals("03")){
             
-            if(sisbb.copiar(linhaImpedimento, 39, 20).trim().equals("Relativa") || sisbb.copiar(linhaImpedimento, 39, 20).trim().equals("Absoluta") || sisbb.copiar(linhaImpedimento, 39, 20).trim().equals("Consta") ){
+            
+            
+             if(opcaoTipo.equals("02")){
+                    
+                 opcaoTipo = "03";    
+                    
+                }
+            
+        
+        sisbb.colar(21, 24, opcaoTipo);
+        sisbb.teclarAguardarTroca("@E");
+
+        if (!sisbb.copiar(23, 4, 11).equals("etalhamento")) {
+
+            sisbb.aguardarInd(1, 3, "ACPM14AB");
+
+            if (!sisbb.copiar(11, 39, 4).equals("Nada")) {
+
+                             
+                int linha_rest = 10;
+
+                do {
+
+                    RestricoesBB res = new RestricoesBB();
+
+                    if ((sisbb.copiar(linha_rest, 42, 5).contains("RELAT")) || sisbb.copiar(linha_rest, 42, 5).contains("ABSOL")){
+
+                        String opcao = sisbb.copiar(linha_rest, 3, 2).trim();
+                        sisbb.colar(21, 24, opcao);
+
+                        sisbb.teclar("@E");
+                        sisbb.aguardarInd(1, 3, "ACPM14BB");
+  
+                            res.setValor(sisbb.copiar(9, 68, 13).trim());
+                            res.setDtaRegistro(sisbb.copiar(19, 61, 10));
+                            res.setModalidade(sisbb.copiar(12, 21, 25).trim());
+                            res.setTipo(sisbb.copiar(8, 21, 25).trim());
+
+                            sisbb.teclarAguardarTroca("@3");
+                            Thread.sleep(100);
+                            sisbb.aguardarInd(1, 3, "ACPM14AB");
+                            res.setDtaBaixa(sisbb.copiar(linha_rest, 71, 10));
+                           
+                            sisbb.colar(21, 24, "  ");
+
+                            listRestricoesBB.add(res);
+
+                    }
+
+                    if (linha_rest == 19) {
+
+                        if (sisbb.copiar(1, 3, 8).equals("ACPM14BB")) {
+                            sisbb.teclarAguardarTroca("@3");
+                            Thread.sleep(200);
+                            sisbb.colar(21, 24, "  ");
+
+                        }
+
+                        Thread.sleep(200);
+                        sisbb.teclarAguardarTroca("@8");
+                        Thread.sleep(200);
+
+                        if (sisbb.copiar(22, 3, 4).equals("Mais")) {
+                            Thread.sleep(200);
+
+                            sisbb.colar(22, 38, "s");
+                            Thread.sleep(200);
+                            sisbb.teclar("@E");
+                            Thread.sleep(200);
+
+                        }
+
+                        linha_rest = 9;
+
+                    }
+
+                    linha_rest++;
+
+                    if (sisbb.copiar(1, 3, 8).equals("ACPM14BB")) {
+                        sisbb.teclarAguardarTroca("@3");
+                        Thread.sleep(100);
+                        sisbb.colar(21, 24, "  ");
+
+                    }
+
+                } while (!sisbb.copiar(linha_rest, 17, 5).equals("") & !sisbb.copiar(23, 3, 6).equals("Última"));
+                
+                sisbb.teclarAguardarTroca("@3");
+                sisbb.aguardarInd(1, 3, "ACPM140B");
+                
+                opcaoTipo = "02";
                 
                 
-                
-                
-                
+       
             }
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            linhaImpedimento++;
-            
-            
-            
-            
+
+        }
         }
         
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-
+        return listRestricoesBB;
 
     }
-    
     public List comunicacaoCliente(String matricula, JanelaSisbb sisbb, String cpf) throws RoboException{
         
          List<BloqueioCorrespondencia> listaCorrespondencia = new ArrayList<>();

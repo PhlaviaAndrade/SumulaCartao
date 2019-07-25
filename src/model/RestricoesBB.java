@@ -9,13 +9,26 @@ package model;
  *
  * @author f3295813
  */
-public class RestricoesParcelamento {
+public class RestricoesBB {
 
     private String tipo;
     private String valor;
     private String dtaRegistro;
     private String modalidade;
     private String dtaBaixa;
+    private boolean selected;
+
+    public boolean isSelected() {
+        return selected;
+    }
+
+    public void setSelected(boolean selected) {
+        this.selected = selected;
+    }
+    
+    
+    
+    
 
     public String getTipo() {
         return tipo;

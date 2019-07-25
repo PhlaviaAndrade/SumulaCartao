@@ -15,7 +15,7 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
 import javafx.scene.control.CheckBox;
 import model.ParcelamentoFatura;
-import model.RestricoesParcelamento;
+import model.RestricoesBB;
 import model.RestricoesTerceiros;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.util.Units;
@@ -39,7 +39,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSectPr;
  */
 public class PagamentoParcelado {
 
-    public void wordPagamentoParcelado(List<RestricoesTerceiros> listaRestricoesTerceiros, ObservableList<RestricoesParcelamento> observableListRestricao, ObservableList<ParcelamentoFatura> observableListParcelamento, String cpf, String npj, String autor, CheckBox cbDoc1, CheckBox cbDoc2, CheckBox cbDoc3, CheckBox cbDoc4, CheckBox cbDoc5, CheckBox cbDoc6, CheckBox cbDoc7, CheckBox cbDoc8, CheckBox cbDoc9, CheckBox cbDoc10) throws FileNotFoundException, InvalidFormatException, IOException, XmlException {
+    public void wordPagamentoParcelado(List<RestricoesTerceiros> listaRestricoesTerceiros, ObservableList<RestricoesBB> observableListRestricao, ObservableList<ParcelamentoFatura> observableListParcelamento, String cpf, String npj, String autor, CheckBox cbDoc1, CheckBox cbDoc2, CheckBox cbDoc3, CheckBox cbDoc4, CheckBox cbDoc5, CheckBox cbDoc6, CheckBox cbDoc7, CheckBox cbDoc8, CheckBox cbDoc9, CheckBox cbDoc10) throws FileNotFoundException, InvalidFormatException, IOException, XmlException {
 
         try {
 
@@ -404,11 +404,11 @@ public class PagamentoParcelado {
                 runR51.setFontSize(10);
 
                 tabelaRestricoes.removeRow(1);
-                List<RestricoesParcelamento> list_Restricoes;
+                List<RestricoesBB> list_Restricoes;
 
                 list_Restricoes = observableListRestricao;
 
-                for (RestricoesParcelamento r : list_Restricoes) {
+                for (RestricoesBB r : list_Restricoes) {
 
                     String tipo = r.getTipo();
                     String valor = r.getValor();
@@ -525,7 +525,7 @@ public class PagamentoParcelado {
                 run3RT.setFontSize(10);
 
                 tabelaRestricoesTerceiros.removeRow(1);
-                List<RestricoesParcelamento> list_Restricoes;
+                List<RestricoesBB> list_Restricoes;
 
                 tabelaRestricoesTerceiros.removeRow(1);
 
@@ -618,8 +618,7 @@ public class PagamentoParcelado {
 
             runDoc8.setText(doc8.toUpperCase());
 
-            runDoc1.setText(doc1.toUpperCase());
-
+         
             String doc9 = "";
             XWPFParagraph doc9P = doc.createParagraph();
             XWPFRun runDoc9 = doc9P.createRun();

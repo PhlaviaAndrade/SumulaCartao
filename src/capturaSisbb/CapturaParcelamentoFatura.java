@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Set;
 import model.ParcelamentoFatura;
 import model.DadosIniciais;
-import model.RestricoesParcelamento;
+import model.RestricoesBB;
 import model.RestricoesTerceiros;
 
 /**
@@ -140,7 +140,7 @@ public class CapturaParcelamentoFatura {
 
     public List restricoes(JanelaSisbb sisbb, String cpf, List<DadosIniciais> listaOperacoesCaptura) throws RoboException, InterruptedException {
 
-        List<RestricoesParcelamento> listRestricoes = new ArrayList<>();
+        List<RestricoesBB> listRestricoes = new ArrayList<>();
 
         sisbb.teclarAguardarTroca("@5");
         sisbb.colar(15, 14, "CLIENTES");
@@ -174,7 +174,7 @@ public class CapturaParcelamentoFatura {
 
                 do {
 
-                    RestricoesParcelamento res = new RestricoesParcelamento();
+                    RestricoesBB res = new RestricoesBB();
 
                     if ((sisbb.copiar(linha_rest, 17, 24).contains("SERASA") || sisbb.copiar(linha_rest, 17, 24).contains("SCPC")) && ((sisbb.copiar(linha_rest, 42, 5).contains("RELAT")) || sisbb.copiar(linha_rest, 42, 5).contains("ABSOL"))) {
 
