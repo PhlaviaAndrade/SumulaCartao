@@ -14,7 +14,7 @@ public class RestricoesReplicadas {
     private String tipo;
     private String dtaOcorrencia;
     private String dtaBaixa;
-    private boolean selecao;
+    private boolean selected;
 
     public String getTipo() {
         return tipo;
@@ -40,12 +40,12 @@ public class RestricoesReplicadas {
         this.dtaBaixa = dtaBaixa;
     }
 
-    public boolean isSelecao() {
-        return selecao;
+    public boolean isSelected() {
+        return selected;
     }
 
-    public void setSelecao(boolean selecao) {
-        this.selecao = selecao;
+    public void setSelected(boolean selected) {
+        this.selected = selected;
     }
     
     

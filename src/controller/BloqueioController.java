@@ -97,7 +97,10 @@ public class BloqueioController extends AbstractController implements Initializa
     List listaOperacoesCaptura;
     List listaBloqueioDataValor;
     List listaBloqueioDatas;
-
+    String dataRestFim;
+    String dataRestInicio;
+    boolean restTudo;
+    
     @FXML
     private JFXCheckBox cbBloqueio_Anotacao;
     @FXML
@@ -178,10 +181,12 @@ public class BloqueioController extends AbstractController implements Initializa
 
     }
 
-    public void capturaBloqueio(String matricula, List<BloqueioDataValor> listaBloqueioDataValor, List<DadosIniciais> listaOperacoesCaptura, List<BloqueioDatasCaptura> listaBloqueioDatas, String cpf, String npj, String autor, JanelaSisbb sisbb, TelaPrincipalController tp) throws PropertyVetoException, Throwable {
+    public void capturaBloqueio(String matricula, List<BloqueioDataValor> listaBloqueioDataValor, List<DadosIniciais> listaOperacoesCaptura, List<BloqueioDatasCaptura> listaBloqueioDatas, String cpf, String npj, String autor, JanelaSisbb sisbb, TelaPrincipalController tp, String dataRestFim, String dataRestInicio, boolean restTudo) throws PropertyVetoException, Throwable {
         ObservableList<TransacaoNaoAutorizada> observableListAutorizacao = null;
         ObservableList<TransacaoNaoAutorizada> observableListSemLimite;
         ObservableList<RestricoesBB> observableListRestricoesBB;
+        ObservableList<RestricoesReplicadas> observableListRestricoesReplicadas;
+         ObservableList<RestricoesTerceiros> observableListRestricoesTerceiros;
 
         List<TransacaoNaoAutorizada> transNaoAutorizada = new ArrayList<>();
         List<TransacaoNaoAutorizada> transSemLimite = new ArrayList<>();
@@ -197,6 +202,9 @@ public class BloqueioController extends AbstractController implements Initializa
         this.listaOperacoesCaptura = listaOperacoesCaptura;
         this.listaBloqueioDatas = listaBloqueioDatas;
         this.matricula = matricula;
+        this.dataRestFim = dataRestFim;
+        this.dataRestInicio = dataRestInicio;
+        this.restTudo = restTudo;
 
         if (sisbb == null) {
 
@@ -263,7 +271,7 @@ public class BloqueioController extends AbstractController implements Initializa
 
             }
 
-            if (!(observableListRestricoesBB = FXCollections.observableList(capBloqueio.restricoesBB(sisbb, cpf))).isEmpty()) {
+            if (!(observableListRestricoesBB = FXCollections.observableList(capBloqueio.restricoesBB(sisbb, cpf, dataRestFim, dataRestInicio, restTudo))).isEmpty()) {
 
                 colRestricoesBB_selecao.setCellValueFactory(new PropertyValueFactory<>("selected"));
                 colRestricoesBB_Modalidade.setCellValueFactory(new PropertyValueFactory<>("modalidade"));
@@ -291,7 +299,79 @@ public class BloqueioController extends AbstractController implements Initializa
             } 
             
             
-            
+           if (!(observableListRestricoesReplicadas = FXCollections.observableList(capBloqueio.restricoesReplicadas(sisbb, cpf, dataRestFim, dataRestInicio, restTudo))).isEmpty()) {
+               
+               colReplicacoes_selecao.setCellValueFactory(new PropertyValueFactory<>("selected"));
+               colReplicacoes_DtaBaixa.setCellValueFactory(new PropertyValueFactory<>("dtaBaixa"));
+               colReplicacoes_DtaRegistro.setCellValueFactory(new PropertyValueFactory<>("dtaOcorrencia"));
+               colReplicacoes_Tipo.setCellValueFactory(new PropertyValueFactory<>("tipo"));
+
+               colReplicacoes_selecao.setCellFactory(CheckBoxTableCell.forTableColumn(colReplicacoes_selecao));
+
+               colReplicacoes_selecao.setCellValueFactory((TableColumn.CellDataFeatures<RestricoesReplicadas, Boolean> param) -> {
+                   RestricoesReplicadas dados = param.getValue();
+                   SimpleBooleanProperty booleanProp = new SimpleBooleanProperty(dados.isSelected());
+                   booleanProp.addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
+                       dados.setSelected(newValue);
+                   });
+                   return booleanProp;
+               });
+               colReplicacoes_selecao.setCellFactory((TableColumn<RestricoesReplicadas, Boolean> p) -> {
+                   CheckBoxTableCell<RestricoesReplicadas, Boolean> cell = new CheckBoxTableCell<>();
+                   return cell;
+               });
+
+               tb_RestricoesReplicadas.setItems(observableListRestricoesReplicadas);
+
+
+               
+               if (!(observableListRestricoesTerceiros = FXCollections.observableList(capBloqueio.restricoesTerceiros(sisbb, cpf, dataRestFim, dataRestInicio, restTudo))).isEmpty()) {
+
+                   colTerceiros_selecao.setCellValueFactory(new PropertyValueFactory<>("selected"));
+                   colTerceiros_DtaBaixa.setCellValueFactory(new PropertyValueFactory<>("dtaBaixa"));
+                   colTerceiros_DtaRegistro.setCellValueFactory(new PropertyValueFactory<>("dtaRegistro"));
+                   colTerceiros_Tipo.setCellValueFactory(new PropertyValueFactory<>("tipo"));
+
+                   colTerceiros_selecao.setCellFactory(CheckBoxTableCell.forTableColumn(colTerceiros_selecao));
+
+                   colTerceiros_selecao.setCellValueFactory((TableColumn.CellDataFeatures<RestricoesTerceiros, Boolean> param) -> {
+                       RestricoesTerceiros dados = param.getValue();
+                       SimpleBooleanProperty booleanProp = new SimpleBooleanProperty(dados.isSelected());
+                       booleanProp.addListener((ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) -> {
+                           dados.setSelected(newValue);
+                       });
+                       return booleanProp;
+                   });
+                   colTerceiros_selecao.setCellFactory((TableColumn<RestricoesTerceiros, Boolean> p) -> {
+                       CheckBoxTableCell<RestricoesTerceiros, Boolean> cell = new CheckBoxTableCell<>();
+                       return cell;
+                   });
+
+                   tb_RestricoesTerceiros.setItems(observableListRestricoesTerceiros);  
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+             }  
+               
+               
+               
+               
+               
+               
+               
+               
+               
+               
+               
+               
+               
+               
+           } 
             
             
             

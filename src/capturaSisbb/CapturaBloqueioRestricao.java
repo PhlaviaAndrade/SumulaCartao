@@ -21,6 +21,8 @@ import model.BloqueioDatasCaptura;
 import model.ContaCartao;
 import model.DadosIniciais;
 import model.RestricoesBB;
+import model.RestricoesReplicadas;
+import model.RestricoesTerceiros;
 import model.TransacaoNaoAutorizada;
 
 /**
@@ -33,10 +35,8 @@ public class CapturaBloqueioRestricao {
 
     public boolean cadastroRestritivo(String matricula, List<BloqueioDataValor> listaBloqueioDataValor, List<DadosIniciais> listaOperacoesCaptura, String cpf, String npj, String autor, JanelaSisbb sisbb, TelaPrincipalController tp) throws RoboException, InterruptedException {
 
-       
-
         for (DadosIniciais t : listaOperacoesCaptura) {
-             int linhaAnotacao = 15;
+            int linhaAnotacao = 15;
             String cartao = t.getNrCartao().substring(0, 16);
 
             while (!sisbb.copiar(1, 3, 8).equals("VIP10300")) {
@@ -53,40 +53,39 @@ public class CapturaBloqueioRestricao {
             sisbb.colar(17, 20, "2");
             sisbb.colar(18, 20, cartao);
             sisbb.teclarAguardarTroca("@E");
-            
-            
-            if(sisbb.copiar(1, 3, 8).equals("VIP10311")){
-                
-            sisbb.aguardarInd(1, 3, "VIP10311");
-            sisbb.teclarAguardarTroca("@6");
 
-            if (sisbb.copiar(1, 3, 8).equals("VIP0112R")) {
-                return false;
-            }
+            if (sisbb.copiar(1, 3, 8).equals("VIP10311")) {
 
-            sisbb.aguardarInd(5, 3, "Nome");
+                sisbb.aguardarInd(1, 3, "VIP10311");
+                sisbb.teclarAguardarTroca("@6");
 
-            do {
-
-                if (sisbb.copiar(linhaAnotacao, 6, 3).equals("007")) {
-                    return true;
-
+                if (sisbb.copiar(1, 3, 8).equals("VIP0112R")) {
+                    return false;
                 }
 
-                linhaAnotacao++;
+                sisbb.aguardarInd(5, 3, "Nome");
 
-                if (linhaAnotacao == 21) {
-                    sisbb.teclarAguardarTroca("@8");
-                    linhaAnotacao = 15;
-                    if (sisbb.copiar(22, 4, 5).equals("ltima")) {
-                        break;
+                do {
+
+                    if (sisbb.copiar(linhaAnotacao, 6, 3).equals("007")) {
+                        return true;
+
                     }
-                }
-            } while (!sisbb.copiar(linhaAnotacao, 6, 3).equals(""));
-            
-        }else{
-             sisbb.teclar("@E");
-                
+
+                    linhaAnotacao++;
+
+                    if (linhaAnotacao == 21) {
+                        sisbb.teclarAguardarTroca("@8");
+                        linhaAnotacao = 15;
+                        if (sisbb.copiar(22, 4, 5).equals("ltima")) {
+                            break;
+                        }
+                    }
+                } while (!sisbb.copiar(linhaAnotacao, 6, 3).equals(""));
+
+            } else {
+                sisbb.teclar("@E");
+
             }
 
         }
@@ -150,7 +149,7 @@ public class CapturaBloqueioRestricao {
             }
             sisbb.aguardarInd(1, 3, "VIP65291");
             sisbb.colar(21, 10, "23");
-            Thread.sleep(200); 
+            Thread.sleep(200);
             sisbb.teclarAguardarTroca("@E");
             sisbb.aguardarInd(1, 3, "VIP60371");
             for (String cartao : listaCartao) {
@@ -203,10 +202,8 @@ public class CapturaBloqueioRestricao {
 
                                 }
 
-                                if (data_sisbb_manipulada <= dataFim_manipulada && data_sisbb_manipulada >= dataInicio_manipulada && sisbb.copiar(linhaData, 59, 15).equals("CREDITO INSUFIC") || !sisbb.copiar(linhaData, 59, 8).equals("APROVADO") ) {
-                                   
-                                    
-                                    
+                                if (data_sisbb_manipulada <= dataFim_manipulada && data_sisbb_manipulada >= dataInicio_manipulada && sisbb.copiar(linhaData, 59, 15).equals("CREDITO INSUFIC") || !sisbb.copiar(linhaData, 59, 8).equals("APROVADO")) {
+
                                     if (sisbb.copiar(1, 3, 8).equals("VIP20711")) {
                                         TransacaoNaoAutorizada tn = new TransacaoNaoAutorizada();
                                         sisbb.colar(linhaData, 4, "X");
@@ -222,7 +219,7 @@ public class CapturaBloqueioRestricao {
                                         sisbb.teclarAguardarTroca("@3");
                                         transNaoAutorizada.add(tn);
                                         sisbb.teclarAguardarTroca("@3");
-                                        
+
                                     } else {
                                         TransacaoNaoAutorizada tn = new TransacaoNaoAutorizada();
                                         sisbb.colar(linhaData, 4, "X");
@@ -242,7 +239,7 @@ public class CapturaBloqueioRestricao {
                                     }
                                 }
                                 linhaData++;
-                                
+
                                 if (linhaData == 21 || sisbb.copiar(linhaData, 8, 3).equals("")) {
                                     sisbb.teclarAguardarTroca("@8");
                                     linhaData = 11;
@@ -265,7 +262,7 @@ public class CapturaBloqueioRestricao {
                 while (!sisbb.copiar(1, 3, 8).equals("VIP60371")) {
                     sisbb.teclarAguardarTroca("@3");
                     Thread.sleep(300);
-                    
+
                 }
             }
             while (!sisbb.copiar(1, 3, 8).equals("VIP60371")) {
@@ -276,14 +273,14 @@ public class CapturaBloqueioRestricao {
         return !transNaoAutorizada.isEmpty(); // testar
 
     }
-    
-    
-    public List restricoesBB(JanelaSisbb sisbb, String cpf) throws RoboException, InterruptedException {
+
+    public List restricoesBB(JanelaSisbb sisbb, String cpf, String dataRestFim, String dataRestInicio, boolean restTudo) throws RoboException, InterruptedException {
 
         List<RestricoesBB> listRestricoesBB = new ArrayList<>();
-
+        int linhaOpcao = 10;
         String opcaoTipo = "01";
-        
+        String tipoRestricao = "";
+
         sisbb.teclarAguardarTroca("@5");
         sisbb.colar(15, 14, "CLIENTES");
         sisbb.aguardarInd(1, 2, "SBBP6130");
@@ -295,55 +292,251 @@ public class CapturaBloqueioRestricao {
         sisbb.teclarAguardarTroca("@E");
         sisbb.colar(21, 41, "14");
         sisbb.teclarAguardarTroca("@E");
-        
-        while(!opcaoTipo.equals("03")){
-            
-            
-            
-             if(opcaoTipo.equals("02")){
-                    
-                 opcaoTipo = "03";    
-                    
-                }
-            
-        
-        sisbb.colar(21, 24, opcaoTipo);
-        sisbb.teclarAguardarTroca("@E");
 
-        if (!sisbb.copiar(23, 4, 11).equals("etalhamento")) {
+        while (!tipoRestricao.equals("Replicaçoes")) {
 
-            sisbb.aguardarInd(1, 3, "ACPM14AB");
+            sisbb.colar(21, 24, "  ");
+            sisbb.colar(21, 24, opcaoTipo);
+            sisbb.teclarAguardarTroca("@E");
 
-            if (!sisbb.copiar(11, 39, 4).equals("Nada")) {
+            if (!sisbb.copiar(23, 4, 11).equals("etalhamento")) {
 
-                             
-                int linha_rest = 10;
+                sisbb.aguardarInd(1, 3, "ACPM14AB");
 
-                do {
+                if (!sisbb.copiar(linhaOpcao, 39, 4).equals("Nada")) {
 
-                    RestricoesBB res = new RestricoesBB();
+                    int linha_rest = 10;
 
-                    if ((sisbb.copiar(linha_rest, 42, 5).contains("RELAT")) || sisbb.copiar(linha_rest, 42, 5).contains("ABSOL")){
+                    do {
 
-                        String opcao = sisbb.copiar(linha_rest, 3, 2).trim();
-                        sisbb.colar(21, 24, opcao);
+                        RestricoesBB res = new RestricoesBB();
 
-                        sisbb.teclar("@E");
-                        sisbb.aguardarInd(1, 3, "ACPM14BB");
-  
-                            res.setValor(sisbb.copiar(9, 68, 13).trim());
+                        if ((sisbb.copiar(linha_rest, 42, 5).contains("RELAT")) || sisbb.copiar(linha_rest, 42, 5).contains("ABSOL")) {
+
+                            String opcao = sisbb.copiar(linha_rest, 3, 2).trim();
+                            sisbb.colar(21, 24, opcao);
+
+                            sisbb.teclar("@E");
+                            sisbb.aguardarInd(1, 3, "ACPM14BB");
+
+                            String valor = sisbb.copiar(9, 68, 13).trim();
+
+                            if (valor.equals("")) {
+                                res.setValor("-");
+
+                            } else {
+                                res.setValor(valor);
+                            }
+
                             res.setDtaRegistro(sisbb.copiar(19, 61, 10));
-                            res.setModalidade(sisbb.copiar(12, 21, 25).trim());
+
+                            String modalidade = sisbb.copiar(12, 21, 25).trim();
+
+                            if (modalidade.equals("")) {
+                                res.setModalidade("-");
+
+                            } else {
+                                res.setModalidade(modalidade);
+                            }
+
                             res.setTipo(sisbb.copiar(8, 21, 25).trim());
 
                             sisbb.teclarAguardarTroca("@3");
                             Thread.sleep(100);
                             sisbb.aguardarInd(1, 3, "ACPM14AB");
                             res.setDtaBaixa(sisbb.copiar(linha_rest, 71, 10));
-                           
+
                             sisbb.colar(21, 24, "  ");
 
                             listRestricoesBB.add(res);
+
+                        }
+
+                        if (linha_rest == 19) {
+
+                            if (sisbb.copiar(1, 3, 8).equals("ACPM14BB")) {
+                                sisbb.teclarAguardarTroca("@3");
+                                Thread.sleep(200);
+                                sisbb.colar(21, 24, "  ");
+
+                            }
+
+                            Thread.sleep(200);
+                            sisbb.teclarAguardarTroca("@8");
+                            Thread.sleep(200);
+
+                            if (sisbb.copiar(22, 3, 4).equals("Mais")) {
+                                Thread.sleep(200);
+
+                                sisbb.colar(22, 38, "s");
+                                Thread.sleep(200);
+                                sisbb.teclar("@E");
+                                Thread.sleep(200);
+
+                            }
+
+                            linha_rest = 9;
+
+                        }
+
+                        linha_rest++;
+
+                        if (sisbb.copiar(1, 3, 8).equals("ACPM14BB")) {
+                            sisbb.teclarAguardarTroca("@3");
+                            Thread.sleep(100);
+                            sisbb.colar(21, 24, "  ");
+
+                        }
+
+                    } while (!sisbb.copiar(linha_rest, 17, 5).equals("") & !sisbb.copiar(23, 3, 6).equals("Última"));
+
+                    sisbb.teclarAguardarTroca("@3");
+                    sisbb.aguardarInd(1, 3, "ACPM140B");
+
+                }
+
+            }
+            linhaOpcao++;
+            tipoRestricao = sisbb.copiar(linhaOpcao, 6, 24).trim();
+            opcaoTipo = sisbb.copiar(linhaOpcao, 4, 1);
+
+        }
+
+        String data_parte1 = dataRestInicio.substring(0, 2); //pega o mês
+        String data_parte2 = dataRestInicio.substring(2, 6); //pega o ano
+        String dataFim1 = dataRestFim.substring(0, 2); //pega o mês
+        String dataFim2 = dataRestFim.substring(2, 6); //pega o ano
+
+        int dataInicio_manipulada = Integer.parseInt(data_parte2 + data_parte1);
+        int dataFim_manipulada = Integer.parseInt(dataFim2 + dataFim1);
+
+        if (!restTudo) {
+
+            List<RestricoesBB> listRestricoesBB2 = new ArrayList<>();
+
+            for (RestricoesBB r : listRestricoesBB) {
+
+                String data_sisbb = r.getDtaRegistro().replace("/", "");
+                String data_Sis_parte1 = data_sisbb.substring(2, 4); //pega o dia
+                String data_Sis_parte2 = data_sisbb.substring(4, 8); //pega o ano
+                int data_sisbb_manipulada = Integer.parseInt(data_Sis_parte2 + data_Sis_parte1);
+
+                if (data_sisbb_manipulada <= dataFim_manipulada && data_sisbb_manipulada >= dataInicio_manipulada) {
+                    listRestricoesBB2.add(r);
+                }
+            }
+            listRestricoesBB = listRestricoesBB2;
+        }
+
+        return listRestricoesBB;
+
+    }
+
+    public List comunicacaoCliente(String matricula, JanelaSisbb sisbb, String cpf) throws RoboException {
+
+        List<BloqueioCorrespondencia> listaCorrespondencia = new ArrayList<>();
+
+        // sisbb.teclarAguardarTroca("@5");
+        sisbb.teclarAguardarTroca("@5");
+        sisbb.colar(15, 14, "INI");
+        sisbb.teclarAguardarTroca("@E");
+        sisbb.aguardarInd(1, 3, "INIM0000");
+        sisbb.colar(19, 25, "14");
+        sisbb.teclarAguardarTroca("@E");
+        sisbb.aguardarInd(1, 3, "MCIM001A");
+        sisbb.colar(12, 13, cpf);
+        sisbb.teclarAguardarTroca("@E");
+        sisbb.aguardarInd(5, 43, "Código");
+
+        int dataInicio = Integer.parseInt(sisbb.copiar(8, 75, 4));
+        dataInicio -= 5;
+
+        sisbb.colar(8, 75, String.valueOf(dataInicio));
+        sisbb.teclarAguardarTroca("@E");
+
+        if (!sisbb.copiar(10, 42, 8).equals("Registro")) {
+
+            sisbb.aguardarInd(1, 2, "INIM145D");
+
+            int linhaSistema = 7;
+
+            do {
+                linhaSistema++;
+                BloqueioCorrespondencia bc = new BloqueioCorrespondencia();
+
+                if (linhaSistema == 20) {
+                    sisbb.teclarAguardarTroca("@8");
+                    linhaSistema = 8;
+
+                    if (sisbb.copiar(23, 4, 5).equals("ltima")) {
+                        break;
+
+                    }
+
+                }
+
+                if (sisbb.copiar(linhaSistema, 12, 6).equals("VIP576") || sisbb.copiar(linhaSistema, 12, 6).equals("ICE404")) {
+
+                    sisbb.colar(linhaSistema, 2, "X");
+                    sisbb.teclarAguardarTroca("@E");
+                    sisbb.aguardarInd(1, 2, "INIM145E");
+
+                    bc.setDtaPostagem(sisbb.copiar(8, 4, 77).trim());
+                    bc.setServicoECT(sisbb.copiar(11, 4, 77).trim());
+                  
+                    String parte1 = sisbb.copiar(18, 36, 44).trim();
+                    String parte2 = sisbb.copiar(19, 4, 76).trim();
+                    String parte3 = sisbb.copiar(20, 4, 76).trim();
+                    
+                    
+                    if (!parte1.equals("")) {
+                        bc.setEndereco(parte1 + ", " + parte2 + ", " + parte3);
+                    }else{
+                        bc.setEndereco("");                         
+                        
+                    }
+                    listaCorrespondencia.add(bc);
+
+                    sisbb.teclarAguardarTroca("@3");
+                    sisbb.aguardarInd(1, 2, "INIM145D");
+
+                }
+
+            } while (!sisbb.copiar(linhaSistema, 4, 3).equals(""));
+
+        }
+
+        return listaCorrespondencia;
+    }
+
+    public List restricoesReplicadas(JanelaSisbb sisbb, String cpf, String dataRestFim, String dataRestInicio, boolean restTudo) throws RoboException, InterruptedException {
+
+        List<RestricoesReplicadas> listaReplicadas = new ArrayList<>();
+
+        sisbb.aguardarInd(1, 3, "ACPM140B");
+
+        if (!sisbb.copiar(12, 39, 4).equals("Nada")) {
+
+            sisbb.colar(21, 24, "03");
+            sisbb.teclarAguardarTroca("@E");
+
+            if (!sisbb.copiar(23, 4, 11).equals("etalhamento")) {
+
+                sisbb.aguardarInd(1, 3, "ACPM14AB");
+
+                int linha_rest = 10;
+
+                do {
+
+                    RestricoesReplicadas res = new RestricoesReplicadas();
+
+                    if ((sisbb.copiar(linha_rest, 42, 5).contains("RELAT")) || sisbb.copiar(linha_rest, 42, 5).contains("ABSOL")) {
+
+                        res.setTipo(sisbb.copiar(linha_rest, 17, 24).trim());
+                        res.setDtaOcorrencia(sisbb.copiar(linha_rest, 48, 10).trim());
+                        res.setDtaBaixa(sisbb.copiar(linha_rest, 71, 10));
+
+                        listaReplicadas.add(res);
 
                     }
 
@@ -384,99 +577,310 @@ public class CapturaBloqueioRestricao {
                     }
 
                 } while (!sisbb.copiar(linha_rest, 17, 5).equals("") & !sisbb.copiar(23, 3, 6).equals("Última"));
-                
-                sisbb.teclarAguardarTroca("@3");
-                sisbb.aguardarInd(1, 3, "ACPM140B");
-                
-                opcaoTipo = "02";
-                
-                
-       
+
             }
 
         }
+
+        String data_parte1 = dataRestInicio.substring(0, 2); //pega o mês
+        String data_parte2 = dataRestInicio.substring(2, 6); //pega o ano
+        String dataFim1 = dataRestFim.substring(0, 2); //pega o mês
+        String dataFim2 = dataRestFim.substring(2, 6); //pega o ano
+
+        int dataInicio_manipulada = Integer.parseInt(data_parte2 + data_parte1);
+        int dataFim_manipulada = Integer.parseInt(dataFim2 + dataFim1);
+
+        if (!restTudo) {
+
+            List<RestricoesReplicadas> listRestricoesRep = new ArrayList<>();
+
+            for (RestricoesReplicadas r : listaReplicadas) {
+
+                String data_sisbb = r.getDtaOcorrencia().replace("/", "");
+                String data_Sis_parte1 = data_sisbb.substring(2, 4); //pega o dia
+                String data_Sis_parte2 = data_sisbb.substring(4, 8); //pega o ano
+                int data_sisbb_manipulada = Integer.parseInt(data_Sis_parte2 + data_Sis_parte1);
+
+                if (data_sisbb_manipulada <= dataFim_manipulada && data_sisbb_manipulada >= dataInicio_manipulada) {
+                    listRestricoesRep.add(r);
+                }
+            }
+            listaReplicadas = listRestricoesRep;
         }
-        
-        return listRestricoesBB;
+
+        return listaReplicadas;
 
     }
-    public List comunicacaoCliente(String matricula, JanelaSisbb sisbb, String cpf) throws RoboException{
-        
-         List<BloqueioCorrespondencia> listaCorrespondencia = new ArrayList<>();
-        
-        
-       // sisbb.teclarAguardarTroca("@5");
-        sisbb.teclarAguardarTroca("@5");
-        sisbb.colar(15, 14, "INI");
-        sisbb.teclarAguardarTroca("@E");
-        sisbb.aguardarInd(1, 3, "INIM0000");
-        sisbb.colar(19, 25, "14");
-        sisbb.teclarAguardarTroca("@E");
-        sisbb.aguardarInd(1, 3, "MCIM001A");
-        sisbb.colar(12, 13, cpf);
-        sisbb.teclarAguardarTroca("@E");
-        sisbb.aguardarInd(5, 43, "Código");
+    
+     public List restricoesTerceiros(JanelaSisbb sisbb, String cpf, String dataRestFim, String dataRestInicio, boolean restTudo) throws RoboException, InterruptedException {
 
-        int dataInicio = Integer.parseInt(sisbb.copiar(8, 75, 4));
-        dataInicio -= 5;
+        List<RestricoesTerceiros> listRestricoesTerceiros = new ArrayList<>();
+        int linhaTipoRestricao = 14;
+        String opcao;
 
-        sisbb.colar(8, 75, String.valueOf(dataInicio));
-        sisbb.teclarAguardarTroca("@E");
-        
+        while (!sisbb.copiar(1, 3, 8).equals("ACPM140B")) {
+            sisbb.teclarAguardarTroca("@3");
+        }
 
-        if (!sisbb.copiar(10, 42, 8).equals("Registro")) {
-            
-            sisbb.aguardarInd(1, 2, "INIM145D");
+        do {
 
-            int linhaSistema = 7;
-            
-         do{
-             linhaSistema++;
-             BloqueioCorrespondencia bc = new BloqueioCorrespondencia();
-             
-               
-                if(linhaSistema == 20){
-                    sisbb.teclarAguardarTroca("@8");
-                    linhaSistema = 7;                  
-                   
-                    
-                } 
-                 
-            
-             if(sisbb.copiar(linhaSistema, 12, 6).equals("VIP576")){
-                 
-                 sisbb.colar(linhaSistema, 2, "X");
-                 sisbb.teclarAguardarTroca("@E");
-                 sisbb.aguardarInd(1, 2, "INIM145E");
-                 
-                 bc.setDtaPostagem(sisbb.copiar(8, 4, 77).trim());
-                 bc.setServicoECT(sisbb.copiar(11, 4, 77).trim());
-                 bc.setEndereco(cpf);
-                 String parte1 = sisbb.copiar(18, 36, 44).trim();
-                 String parte2 = sisbb.copiar(19, 4, 76).trim();
-                 String parte3 = sisbb.copiar(20, 4, 76).trim();
-                 bc.setEndereco(parte1 + ", " + parte2 + ", " + parte3);
-                 
-                 listaCorrespondencia.add(bc);
-                 
-                  sisbb.teclarAguardarTroca("@3");
-                 sisbb.aguardarInd(1, 2, "INIM145D");
-                 
-               
-               
-                 
-             }
-             
-             
-             
-             
-         }while(!sisbb.copiar(linhaSistema, 4, 3).equals(""));  
-           
-        
-           
-       }
+            if (restTudo) {
+
+                if (!sisbb.copiar(linhaTipoRestricao, 39, 18).trim().equals("Nada consta")) {
+
+                    opcao = sisbb.copiar(linhaTipoRestricao, 4, 1);
+                    sisbb.colar(21, 24, opcao);
+                    sisbb.teclarAguardarTroca("@E");
+
+                    int linha_rest = 10;
+
+                    do {
+
+                        RestricoesTerceiros res = new RestricoesTerceiros();
+
+                        if (sisbb.copiar(linha_rest, 42, 5).contains("RELAT") || sisbb.copiar(linha_rest, 42, 5).contains("ABSOL")) {
+
+                            if (!sisbb.copiar(10, 6, 3).equals("CCF")) {
+                                res.setTipo(sisbb.copiar(linha_rest, 17, 24).trim());
+
+                            } else {
+                                String tipo = sisbb.copiar(linha_rest, 6, 3);
+                                String cheques = sisbb.copiar(linha_rest, 17, 24).trim();
+                                String ccf = tipo.concat(" " + cheques);
+                                res.setTipo(ccf);
+
+                            }
+
+                            res.setDtaRegistro(sisbb.copiar(linha_rest, 48, 10));
+                            res.setDtaBaixa(sisbb.copiar(linha_rest, 71, 10));
+
+                            listRestricoesTerceiros.add(res);
+
+                        }
+
+                        if (linha_rest == 19) {
+
+                            Thread.sleep(100);
+                            sisbb.teclarAguardarTroca("@8");
+                            Thread.sleep(200);
+
+                            if (sisbb.copiar(22, 3, 4).equals("Mais")) {
+                                Thread.sleep(200);
+
+                                sisbb.colar(22, 38, "s");
+                                Thread.sleep(300);
+                                sisbb.teclar("@E");
+                                Thread.sleep(200);
+
+                            }
+
+                            linha_rest = 9;
+
+                        }
+
+                        linha_rest++;
+
+                    } while (!sisbb.copiar(linha_rest, 17, 5).equals("") & !sisbb.copiar(23, 3, 6).equals("Última"));
+
+                }
+
+                if (!sisbb.copiar(1, 3, 8).equals("ACPM140B")) {
+                    sisbb.teclarAguardarTroca("@3");
+
+                }
+
+                if (sisbb.copiar(linhaTipoRestricao + 1, 6, 20).trim().equals("BACEN")) {
+
+                    linhaTipoRestricao += 2;
+
+                } else {
+
+                    linhaTipoRestricao++;
+                }
+
+            } else {
+
+                if (!sisbb.copiar(linhaTipoRestricao, 39, 18).trim().equals("Nada consta")) {
+
+                    opcao = sisbb.copiar(linhaTipoRestricao, 4, 1);
+                    sisbb.colar(21, 24, opcao);
+                    sisbb.teclarAguardarTroca("@E");
+
+                    int linha_rest = 10;
+
+                    int linhaData = 10;
+
+                    String data_parte1 = dataRestInicio.substring(0, 2); //pega o mês
+                    String data_parte2 = dataRestInicio.substring(2, 6); //pega o ano
+                    String dataFim1 = dataRestFim.substring(0, 2); //pega o mês
+                    String dataFim2 = dataRestFim.substring(2, 6); //pega o ano
+
+                    int dataInicio_manipulada = Integer.parseInt(data_parte2 + data_parte1);
+                    int dataFim_manipulada = Integer.parseInt(dataFim2 + dataFim1);
+
+                    do {
+
+                        String data_sisbb = sisbb.copiar(linhaData, 48, 10).replace("/", "");
+                        String data_Sis_parte1 = data_sisbb.substring(2, 4); //pega o dia
+                        String data_Sis_parte2 = data_sisbb.substring(4, 8); //pega o ano
+                        int data_sisbb_manipulada = Integer.parseInt(data_Sis_parte2 + data_Sis_parte1);
+
+                        if (data_sisbb_manipulada < dataInicio_manipulada) {
+                            break;
+
+                        }
+
+                        RestricoesTerceiros res = new RestricoesTerceiros();
+
+                        if ((data_sisbb_manipulada <= dataFim_manipulada && data_sisbb_manipulada >= dataInicio_manipulada) && (sisbb.copiar(linha_rest, 42, 5).contains("RELAT") || sisbb.copiar(linha_rest, 42, 5).contains("ABSOL"))) {
+
+                            if (!sisbb.copiar(10, 6, 3).equals("CCF")) {
+                                res.setTipo(sisbb.copiar(linha_rest, 17, 24).trim());
+
+                            } else {
+                                String tipo = sisbb.copiar(linha_rest, 6, 3);
+                                String cheques = sisbb.copiar(linha_rest, 17, 24).trim();
+                                String ccf = tipo.concat(" " + cheques);
+                                res.setTipo(ccf);
+
+                            }
+
+                            res.setDtaRegistro(sisbb.copiar(linha_rest, 48, 10));
+                            res.setDtaBaixa(sisbb.copiar(linha_rest, 71, 10));
+
+                            listRestricoesTerceiros.add(res);
+
+                        }
+
+                        if (linha_rest == 19) {
+
+                            Thread.sleep(100);
+                            sisbb.teclarAguardarTroca("@8");
+                            Thread.sleep(100);
+                            linhaData = 9;
+
+                            if (sisbb.copiar(22, 3, 4).equals("Mais")) {
+                                Thread.sleep(200);
+
+                                sisbb.colar(22, 38, "s");
+                                Thread.sleep(300);
+                                sisbb.teclar("@E");
+                                Thread.sleep(200);
+
+                            }
+
+                            linha_rest = 9;
+
+                        }
+
+                        linha_rest++;
+                        linhaData++;
+
+                    } while (!sisbb.copiar(linha_rest, 17, 5).equals("") & !sisbb.copiar(23, 3, 6).equals("Última"));
+
+                }
+
+                if (!sisbb.copiar(1, 3, 8).equals("ACPM140B")) {
+                    sisbb.teclarAguardarTroca("@3");
+
+                }
+
               
-        return listaCorrespondencia;
+                    linhaTipoRestricao++;
+                
+
+            }
+
+        } while (!sisbb.copiar(linhaTipoRestricao, 6, 4).equals(""));
+        
+        
+         sisbb.teclarAguardarTroca("@3");
+         sisbb.aguardarInd(1, 3, "MCIM100F");
+         sisbb.teclarAguardarTroca("@3");
+         sisbb.aguardarInd(1, 3, "MCIM001A");
+         sisbb.teclarAguardarTroca("@3");
+         sisbb.aguardarInd(1, 3, "MCIM0000");
+         sisbb.teclarAguardarTroca("@3");
+         sisbb.aguardarInd(1, 3, "SBBP6130");
+         sisbb.colar(21, 20, "02");
+         sisbb.teclarAguardarTroca("@E");
+         sisbb.colar(18, 18, "15");
+         sisbb.colar(19, 18, cpf);
+         sisbb.teclarAguardarTroca("@E");
+         
+
+ if (!sisbb.copiar(23, 7, 5).equals("foram")) {
+
+               // sisbb.aguardarInd(1, 3, "ACPM14AB");
+
+                int linha_rest = 10;
+
+                do {
+
+                    RestricoesTerceiros res = new RestricoesTerceiros();
+
+                    if ((sisbb.copiar(linha_rest, 37, 4).contains("RELA")) || sisbb.copiar(linha_rest, 37, 4).contains("ABSO")) {
+
+                        res.setTipo(sisbb.copiar(linha_rest, 17, 19).trim());
+                        res.setDtaRegistro(sisbb.copiar(linha_rest, 42, 10).trim());
+                        res.setDtaBaixa(sisbb.copiar(linha_rest, 62, 10));
+
+                        listRestricoesTerceiros.add(res);
+
+                    }
+
+                    if (linha_rest == 19) {
+
+                        if (sisbb.copiar(1, 3, 8).equals("ACPM14BB")) {
+                            sisbb.teclarAguardarTroca("@3");
+                            Thread.sleep(200);
+                            sisbb.colar(21, 24, "  ");
+
+                        }
+
+                        Thread.sleep(200);
+                        sisbb.teclarAguardarTroca("@8");
+                        Thread.sleep(200);
+
+                        if (sisbb.copiar(22, 3, 4).equals("Mais")) {
+                            Thread.sleep(200);
+
+                            sisbb.colar(22, 38, "s");
+                            Thread.sleep(200);
+                            sisbb.teclar("@E");
+                            Thread.sleep(200);
+
+                        }
+
+                        linha_rest = 9;
+
+                    }
+
+                    linha_rest++;
+
+                    if (sisbb.copiar(1, 3, 8).equals("ACPM14BB")) {
+                        sisbb.teclarAguardarTroca("@3");
+                        Thread.sleep(100);
+                        sisbb.colar(21, 24, "  ");
+
+                    }
+
+                } while (!sisbb.copiar(linha_rest, 17, 5).equals("") & !sisbb.copiar(23, 3, 6).equals("Última"));
+
+            }
+
+
+        
+        
+        
+        
+        
+        
+        
+        
+
+        return listRestricoesTerceiros;
+
     }
 
 }

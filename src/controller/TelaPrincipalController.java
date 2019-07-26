@@ -219,7 +219,7 @@ public class TelaPrincipalController implements Initializable {
             
             listaPlastico.clear();
 
-            if (sisbb != null) {
+            if (sisbb != null && sisbb.getJanela() != null) {
                 sisbb.rotinaEncerramento();
             }
 
@@ -381,7 +381,7 @@ public class TelaPrincipalController implements Initializable {
 
                         try {
 
-                            bloqueioCaptura.capturaBloqueio(matricula, listaBloqueioDataValor, listaOperacoesCaptura, listaBloqueioDatas, cpf, npj, autor, sisbb, this);
+                            bloqueioCaptura.capturaBloqueio(matricula, listaBloqueioDataValor, listaOperacoesCaptura, listaBloqueioDatas, cpf, npj, autor, sisbb, this, dataRestFim, dataRestInicio, restTudo);
 
                         } catch (Throwable ex) {
                             Logger.getLogger(TelaPrincipalController.class.getName()).log(Level.SEVERE, null, ex);

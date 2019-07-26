@@ -25,6 +25,8 @@ public class JanelaSisbb extends Term3270{
         janela.setLayout(new BorderLayout());
         janela.add(this, BorderLayout.CENTER);
         janela.setVisible(true);
+        
+        
      
 
         janela.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -57,6 +59,12 @@ public class JanelaSisbb extends Term3270{
     public void setTamanho(int largura, int altura){
         janela.setSize(largura, altura);
     }
+
+    public JFrame getJanela() {
+        return janela;
+    }
+    
+    
     public void rotinaEncerramento(){
         this.paradaForcada();
         janela.remove(this);
