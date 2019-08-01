@@ -11,6 +11,7 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXCheckBox;
 import dao.ConsultaSQL;
 import java.beans.PropertyVetoException;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +41,9 @@ import model.RestricoesReplicadas;
 import model.RestricoesTerceiros;
 import model.TransacaoNaoAutorizada;
 import model.utils;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import poi.PagamentoParcelado;
+import poi.TransacoesNaoAutorizadas;
 
 /**
  * FXML Controller class
@@ -100,6 +103,9 @@ public class BloqueioController extends AbstractController implements Initializa
     String dataRestFim;
     String dataRestInicio;
     boolean restTudo;
+    int restricoes;
+    
+     List<String> telaTransacoes = new ArrayList<>();
     
     @FXML
     private JFXCheckBox cbBloqueio_Anotacao;
@@ -171,7 +177,15 @@ public class BloqueioController extends AbstractController implements Initializa
     private TableColumn<RestricoesReplicadas, String> colReplicacoes_DtaRegistro;
     @FXML
     private TableColumn<RestricoesReplicadas, String> colReplicacoes_DtaBaixa;
-
+    @FXML
+    private JFXButton btn_GerarWordTransacoes;
+    @FXML
+    private TextArea txtBloqueio;
+    @FXML
+    private Text txt_Restricao12;
+    @FXML
+    private TextArea txtCartaoBloqueado;
+   
     /**
      * Initializes the controller class.
      */
@@ -186,13 +200,18 @@ public class BloqueioController extends AbstractController implements Initializa
         ObservableList<TransacaoNaoAutorizada> observableListSemLimite;
         ObservableList<RestricoesBB> observableListRestricoesBB;
         ObservableList<RestricoesReplicadas> observableListRestricoesReplicadas;
-         ObservableList<RestricoesTerceiros> observableListRestricoesTerceiros;
+        ObservableList<RestricoesTerceiros> observableListRestricoesTerceiros;
+        telaTransacoes.clear();
+
+        
 
         List<TransacaoNaoAutorizada> transNaoAutorizada = new ArrayList<>();
         List<TransacaoNaoAutorizada> transSemLimite = new ArrayList<>();
         List<BloqueioCorrespondencia> listCorrespondencia = new ArrayList<>();
 
         String concatCorrespondencia = "";
+        String restricaoAtiva = "";
+       
 
         this.cpf = cpf;
         this.npj = npj;
@@ -205,6 +224,13 @@ public class BloqueioController extends AbstractController implements Initializa
         this.dataRestFim = dataRestFim;
         this.dataRestInicio = dataRestInicio;
         this.restTudo = restTudo;
+      
+        
+        
+        
+//            if (sisbb != null && sisbb.getJanela() != null) {
+//                sisbb.rotinaEncerramento();
+//            }
 
         if (sisbb == null) {
 
@@ -218,12 +244,29 @@ public class BloqueioController extends AbstractController implements Initializa
         }
 
         try {
+            BloqueioController bc = new BloqueioController();
 
-            if (capBloqueio.cadastroRestritivo(matricula, listaBloqueioDataValor, listaOperacoesCaptura, cpf, npj, autor, sisbb, tp)) {
+            if (capBloqueio.cadastroRestritivo(matricula, listaBloqueioDataValor, listaOperacoesCaptura, cpf, npj, autor, sisbb, tp, txtCartaoBloqueado)) {
                 cbBloqueio_Anotacao.setSelected(true);
+                
             }
+            
+            String permaneceBloqueada =  txtCartaoBloqueado.getText();
+            
+            if(!permaneceBloqueada.equals("")){
+                
+               txtBloqueio.setText("(X) Sim, bloqueio vigente. \n( ) Não, função crédito ativa.");
+                
+            }else{
+                
+               txtBloqueio.setText("( ) Sim, bloqueio vigente. \n(X) Não, função crédito ativa.");
+               txtCartaoBloqueado.setText("( )Sim \n(X) Não");
+                
+            }
+       
+            
 
-            if (capBloqueio.creditoInsuficiente(matricula, listaBloqueioDataValor, listaBloqueioDatas, listaOperacoesCaptura, cpf, sisbb, tp, transNaoAutorizada, vencido, suspeitaFraude)) {
+            if (capBloqueio.creditoInsuficiente(matricula, listaBloqueioDataValor, listaBloqueioDatas, listaOperacoesCaptura, cpf, sisbb, tp, transNaoAutorizada, vencido, suspeitaFraude, telaTransacoes)) {
 
                 for (TransacaoNaoAutorizada t : transNaoAutorizada) {
                     String tipo = t.getResposta().substring(0, 2);
@@ -323,7 +366,7 @@ public class BloqueioController extends AbstractController implements Initializa
 
                tb_RestricoesReplicadas.setItems(observableListRestricoesReplicadas);
 
-
+           }
                
                if (!(observableListRestricoesTerceiros = FXCollections.observableList(capBloqueio.restricoesTerceiros(sisbb, cpf, dataRestFim, dataRestInicio, restTudo))).isEmpty()) {
 
@@ -371,7 +414,7 @@ public class BloqueioController extends AbstractController implements Initializa
                
                
                
-           } 
+           
             
             
             
@@ -389,6 +432,7 @@ public class BloqueioController extends AbstractController implements Initializa
 
     @FXML
     private void geraSumulaBloqueio(ActionEvent event) throws Throwable {
+        
         ConsultaSQL consultaSQL = new ConsultaSQL();
 
         consultaSQL.inserir(npj, matricula, "Bloqueio ou Restrição ao uso");
@@ -397,6 +441,17 @@ public class BloqueioController extends AbstractController implements Initializa
         //  wordParcelamento.wordPagamentoParcelado(observableListParcelamento, cpf, npj, autor, cbDoc1, cbDoc2, cbDoc3, cbDoc4, cbDoc5, cbDoc6, cbDoc7);
         //limparParcelamento();
 
+    }
+
+    @FXML
+    private void geraDocTransacoes(ActionEvent event) throws InvalidFormatException, IOException {
+       TransacoesNaoAutorizadas t = new TransacoesNaoAutorizadas();
+       
+       t.wordTransacoesNaoAutorizadas(telaTransacoes, autor, matricula);
+        
+        
+        
+        
     }
 
 }

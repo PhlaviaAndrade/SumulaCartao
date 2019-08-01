@@ -189,8 +189,8 @@ public class TelaPrincipalController implements Initializable {
         Image imagem = new Image("/views/imagens/logo.png");
         imageView.setImage(imagem);
 
-        txtDataInicio.setText("01.01.2019");
-        txtDataFim.setText("01.07.2019");
+        txtDataInicio.setText("01/2018");
+        txtDataFim.setText("07/2019");
 
         CurrencyField cur = new CurrencyField();
 
@@ -215,7 +215,11 @@ public class TelaPrincipalController implements Initializable {
     @FXML
     private void pegaInformacoesIniciais(ActionEvent event) throws Throwable {
         
+        limparTelaPrincipalControllerSemCpf();
+        
         t1 = new Thread(() -> {
+            
+           
             
             listaPlastico.clear();
 
@@ -328,6 +332,24 @@ public class TelaPrincipalController implements Initializable {
         
        
         t2 = new Thread(() -> {
+            
+            
+        if(cb_ParcelamentoFatura.isSelected()){
+            sumula = 1;
+            
+            
+        }else if(cb_Bloqueio.isSelected()){
+            sumula = 2;
+            
+        }else if(cb_NaoReconhecida.isSelected()){
+            sumula = 3;
+            
+        } else if(cb_Generico.isSelected()){
+            sumula = 4;
+            
+        }         
+            
+            
             
         String dataRestInicio ="";
         String dataRestFim = "";
@@ -546,6 +568,21 @@ public class TelaPrincipalController implements Initializable {
         txt_DataFimRestricao.clear();
         txt_DataInicioRestricao.clear();
     }
+    
+     public void limparTelaPrincipalControllerSemCpf() {
+
+        txt_Autor.clear();
+       
+        cb_ParcelamentoFatura.setSelected(false);
+        cb_Bloqueio.setSelected(false);
+        cb_Generico.setSelected(false);
+        cb_NaoReconhecida.setSelected(false);
+        tableDadosGerais.getItems().clear();
+        cb_CapturarTudoRestricao.setSelected(false);
+        txt_DataFimRestricao.clear();
+        txt_DataInicioRestricao.clear();
+    }
+
 
     @FXML
     private void montaTabelaDataValor(ActionEvent event) {
@@ -603,7 +640,7 @@ public class TelaPrincipalController implements Initializable {
     private void inputDataKeyTypedDataInicial() throws ParseException {
 
         TextFieldFormatter tff = new TextFieldFormatter();
-        tff.setMask("##.##.####");
+        tff.setMask("##/####");
         tff.setCaracteresValidos("0123456789");
         tff.setTf(txtDataInicio);
         tff.formatter();
@@ -614,7 +651,7 @@ public class TelaPrincipalController implements Initializable {
     private void inputDataKeyTypedDataFinal() throws ParseException {
 
         TextFieldFormatter tff = new TextFieldFormatter();
-        tff.setMask("##.##.####");
+        tff.setMask("##/####");
         tff.setCaracteresValidos("0123456789");
         tff.setTf(txtDataFim);
         tff.formatter();
@@ -629,7 +666,7 @@ public class TelaPrincipalController implements Initializable {
         String dataInicio = txtDataInicio.getText();
         String dataFim = txtDataFim.getText();
 
-        if (txtDataInicio.getText().length() != 0 & txtDataFim.getText().length() != 0 & txtDataInicio.getText().trim().length() == 10 & txtDataFim.getText().trim().length() == 10) {
+        if (txtDataInicio.getText().length() != 0 & txtDataFim.getText().length() != 0 & txtDataInicio.getText().trim().length() == 7 & txtDataFim.getText().trim().length() == 7) {
 
             bdv.setDataInicio(dataInicio);
             bdv.setDataFim(dataFim);

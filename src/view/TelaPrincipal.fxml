@@ -84,7 +84,7 @@
                                     <Font name="Open Sans Bold" size="13.0" />
                                  </font>
                               </Label>
-                              <JFXCheckBox fx:id="cb_CapturarTudoRestricao" checkedColor="#2e9afe" layoutX="14.0" layoutY="362.0" onAction="#ParcelamentoFatura" onMouseClicked="#desabilitarDatasRest" text="Capturar todas as restrições de terceiros" textFill="WHITE" unCheckedColor="#fff646">
+                              <JFXCheckBox fx:id="cb_CapturarTudoRestricao" checkedColor="#2e9afe" layoutX="14.0" layoutY="362.0" onMouseClicked="#desabilitarDatasRest" text="Capturar todas as restrições de terceiros" textFill="WHITE" unCheckedColor="#fff646">
                                  <font>
                                     <Font name="Open Sans Bold" size="13.0" />
                                  </font>
@@ -168,8 +168,8 @@
                                           <TableColumn fx:id="colDataFim_Bloqueio" prefWidth="75.0" text="Data Fim" />
                                        </columns>
                                     </TableView>
-                                    <TextField fx:id="txtDataInicio" layoutX="442.0" layoutY="380.0" onKeyTyped="#inputDataKeyTypedDataInicial" promptText="Data Início" />
-                                    <TextField fx:id="txtDataFim" layoutX="442.0" layoutY="422.0" onKeyTyped="#inputDataKeyTypedDataFinal" promptText="Data Fim" />
+                                    <TextField fx:id="txtDataInicio" layoutX="442.0" layoutY="380.0" onKeyTyped="#inputDataKeyTypedDataInicial" promptText="Data início MM/AAAA" />
+                                    <TextField fx:id="txtDataFim" layoutX="442.0" layoutY="422.0" onKeyTyped="#inputDataKeyTypedDataFinal" promptText="Data fim MM/AAAA" />
                                     <JFXButton fx:id="btn_InserirDatas" buttonType="RAISED" layoutX="502.0" layoutY="487.0" onAction="#montaTabelaDatas" prefHeight="25.0" prefWidth="89.0" style="-fx-background-color: #fff646;" text="Inserir" textFill="LIGHTSLATEGRAY">
                                        <font>
                                           <Font name="Open Sans Bold" size="14.0" />
@@ -197,7 +197,7 @@
                            <content>
                               <ScrollPane prefViewportHeight="759.0" prefViewportWidth="863.0" prefWidth="847.0">
                                  <content>
-                                    <AnchorPane fx:id="AP_BloqueioRestricao" minHeight="0.0" minWidth="0.0" prefHeight="2400.0" prefWidth="847.0" />
+                                    <AnchorPane fx:id="AP_BloqueioRestricao" minHeight="0.0" minWidth="0.0" prefHeight="2606.0" prefWidth="847.0" />
                                  </content>
                               </ScrollPane>
                            </content>

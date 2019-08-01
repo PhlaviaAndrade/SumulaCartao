@@ -6,15 +6,16 @@
 package capturaSisbb;
 
 import br.com.bb.jibm3270.RoboException;
+import controller.BloqueioController;
 import controller.JanelaSisbb;
 import controller.TelaPrincipalController;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import javafx.scene.control.TextArea;
 import model.BloqueioCorrespondencia;
 import model.BloqueioDataValor;
 import model.BloqueioDatasCaptura;
@@ -32,8 +33,12 @@ import model.TransacaoNaoAutorizada;
 public class CapturaBloqueioRestricao {
 
     List teste2;
+   
 
-    public boolean cadastroRestritivo(String matricula, List<BloqueioDataValor> listaBloqueioDataValor, List<DadosIniciais> listaOperacoesCaptura, String cpf, String npj, String autor, JanelaSisbb sisbb, TelaPrincipalController tp) throws RoboException, InterruptedException {
+    public boolean cadastroRestritivo(String matricula, List<BloqueioDataValor> listaBloqueioDataValor, List<DadosIniciais> listaOperacoesCaptura, String cpf, String npj, String autor, JanelaSisbb sisbb, TelaPrincipalController tp, TextArea txtCartaoBloqueado) throws RoboException, InterruptedException {
+      
+        boolean retorno = false;
+        String restricoes = "";
 
         for (DadosIniciais t : listaOperacoesCaptura) {
             int linhaAnotacao = 15;
@@ -42,9 +47,7 @@ public class CapturaBloqueioRestricao {
             while (!sisbb.copiar(1, 3, 8).equals("VIP10300")) {
                 sisbb.teclarAguardarTroca("@3");
                 Thread.sleep(300);
-
             }
-
             sisbb.aguardarInd(1, 3, "VIP10300");
             sisbb.colar(21, 20, "1");
             sisbb.teclarAguardarTroca("@E");
@@ -59,21 +62,28 @@ public class CapturaBloqueioRestricao {
                 sisbb.aguardarInd(1, 3, "VIP10311");
                 sisbb.teclarAguardarTroca("@6");
 
-                if (sisbb.copiar(1, 3, 8).equals("VIP0112R")) {
-                    return false;
-                }
-
                 sisbb.aguardarInd(5, 3, "Nome");
+                
 
                 do {
 
                     if (sisbb.copiar(linhaAnotacao, 6, 3).equals("007")) {
-                        return true;
+                        retorno = true;
 
                     }
+                    
+                    if(!sisbb.copiar(1,3,9).equals("VIP0112R")){
+
+                    String parte1 = sisbb.copiar(linhaAnotacao, 6, 43);
+                    String parte2 = sisbb.copiar(linhaAnotacao, 54, 10);
+
+                  restricoes += parte1 + " " +" - " + parte2 + "\n";
+                  
+                    }
+                  
+                  
 
                     linhaAnotacao++;
-
                     if (linhaAnotacao == 21) {
                         sisbb.teclarAguardarTroca("@8");
                         linhaAnotacao = 15;
@@ -85,19 +95,22 @@ public class CapturaBloqueioRestricao {
 
             } else {
                 sisbb.teclar("@E");
-
             }
-
         }
-        return false;
+        txtCartaoBloqueado.setText(restricoes);
+
+        return retorno;
     }
 
-    public boolean creditoInsuficiente(String matricula, List<BloqueioDataValor> listaBloqueioDataValor, List<BloqueioDatasCaptura> listaBloqueioDatas, List<DadosIniciais> listaOperacoesCaptura, String cpf, JanelaSisbb sisbb, TelaPrincipalController tp, List transNaoAutorizada, String vencido, String suspeitaFraude) throws RoboException, ParseException, InterruptedException {
+    public boolean creditoInsuficiente(String matricula, List<BloqueioDataValor> listaBloqueioDataValor, List<BloqueioDatasCaptura> listaBloqueioDatas, List<DadosIniciais> listaOperacoesCaptura, String cpf, JanelaSisbb sisbb, TelaPrincipalController tp, List transNaoAutorizada, String vencido, String suspeitaFraude, List<String> telaTransacoes) throws RoboException, ParseException, InterruptedException {
 
 //        SimpleDateFormat out = new SimpleDateFormat("EEE MMM d HH:mm:ss zzz yyyy", Locale.ENGLISH);
 //        SimpleDateFormat in = new SimpleDateFormat("ddMMyyyy");
         Set<ContaCartao> listaCC = new HashSet<>();
+        StringBuilder stringBuilderTela = new StringBuilder();
         String contaAntiga = "";
+        String copiar_renda = " ";
+        List<String> telaTransacoes2 = new ArrayList<>();
         listaOperacoesCaptura.sort(Comparator.comparing(DadosIniciais::getConta));
         for (DadosIniciais t : listaOperacoesCaptura) {
             Set<String> ListSet = new HashSet<>();
@@ -169,33 +182,33 @@ public class CapturaBloqueioRestricao {
                 Thread.sleep(400);
                 if (!sisbb.copiar(11, 8, 3).equals("")) {
                     for (BloqueioDatasCaptura f : listaBloqueioDatas) { // lista das datas da tabela
-                        String dataInicial = f.getDataInicio().replace(".", "");
-                        String dataFim = f.getDataFim().replace(".", "");
+                        String dataInicial = f.getDataInicio().replace("/", "");
+                        String dataFim = f.getDataFim().replace("/", "");
 //                Date dataF = in.parse(dataFim);
 
                         while (!sisbb.copiar(23, 4, 7).equals("rimeira")) {
                             sisbb.teclarAguardarTroca("@7");
                         }
 
-                        String data_parte1 = dataInicial.substring(0, 2); //pega o dia
-                        String data_parte2 = dataInicial.substring(2, 4); //pega o mês
-                        String data_parte3 = dataInicial.substring(4, 8); //pega o ano
-                        String dataFim1 = dataFim.substring(0, 2); //pega o dia
-                        String dataFim2 = dataFim.substring(2, 4); //pega o mês
-                        String dataFim3 = dataFim.substring(4, 8); //pega o ano
-                        int dataInicio_manipulada = Integer.parseInt(data_parte3 + data_parte2 + data_parte1);
-                        int dataFim_manipulada = Integer.parseInt(dataFim3 + dataFim2 + dataFim1);
+                        String data_parte1 = dataInicial.substring(0, 2); //pega o mês
+                        String data_parte2 = dataInicial.substring(2, 6); //pega o ano
+                        String dataFim1 = dataFim.substring(0, 2); //pega o mês
+                        String dataFim2 = dataFim.substring(2, 6); //pega o ano
+
+                        int dataInicio_manipulada = Integer.parseInt(data_parte2 + data_parte1);
+                        int dataFim_manipulada = Integer.parseInt(dataFim2 + dataFim1);
 //                LocalDate date;
 //                date = dataF.toInstant().atZone( ZoneId.systemDefault() ).toLocalDate();
                         int linhaData = 11;
                         do {
                             try {
+
                                 Thread.sleep(100);
-                                String data_sisbb = sisbb.copiar(linhaData, 8, 10).replace(".", "");
+                                String data_sisbb = sisbb.copiar(linhaData, 11, 7).replace(".", "");
                                 String data_Sis_parte1 = data_sisbb.substring(0, 2); //pega o dia
-                                String data_Sis_parte2 = data_sisbb.substring(2, 4); //pega o mês
-                                String data_Sis_parte3 = data_sisbb.substring(4, 8); //pega o ano
-                                int data_sisbb_manipulada = Integer.parseInt(data_Sis_parte3 + data_Sis_parte2 + data_Sis_parte1);
+                                String data_Sis_parte2 = data_sisbb.substring(2, 6); //pega o mês
+
+                                int data_sisbb_manipulada = Integer.parseInt(data_Sis_parte2 + data_Sis_parte1);
 
                                 if (data_sisbb_manipulada < dataInicio_manipulada) {
                                     break;
@@ -211,6 +224,18 @@ public class CapturaBloqueioRestricao {
                                         tn.setDataOcorrencia(sisbb.copiar(linhaData, 8, 10));
                                         tn.setValorCompra(sisbb.copiar(linhaData, 46, 12).trim());
                                         sisbb.teclarAguardarTroca("@E");
+
+                                        int copiar = 3;
+
+                                        while (copiar <= 22) {
+                                            copiar_renda = sisbb.copiar(copiar, 3, 77);
+
+                                            telaTransacoes2.add(copiar_renda);
+
+                                            copiar++;
+
+                                        }
+
                                         tn.setRazaoRecusa(sisbb.copiar(10, 63, 18).trim());
                                         tn.setResposta(sisbb.copiar(11, 17, 18).trim());
                                         tn.setVencimento(sisbb.copiar(5, 17, 12).trim());
@@ -270,6 +295,20 @@ public class CapturaBloqueioRestricao {
                 Thread.sleep(300);
             }
         }
+        if (!telaTransacoes2.isEmpty()) {
+
+            for (String t : telaTransacoes2) {
+
+                stringBuilderTela.append(t).append("\n");
+
+            }
+
+            String tela_capturada = stringBuilderTela.toString();
+
+            telaTransacoes.add(tela_capturada);
+
+        }
+
         return !transNaoAutorizada.isEmpty(); // testar
 
     }
@@ -402,15 +441,15 @@ public class CapturaBloqueioRestricao {
 
         }
 
-        String data_parte1 = dataRestInicio.substring(0, 2); //pega o mês
-        String data_parte2 = dataRestInicio.substring(2, 6); //pega o ano
-        String dataFim1 = dataRestFim.substring(0, 2); //pega o mês
-        String dataFim2 = dataRestFim.substring(2, 6); //pega o ano
-
-        int dataInicio_manipulada = Integer.parseInt(data_parte2 + data_parte1);
-        int dataFim_manipulada = Integer.parseInt(dataFim2 + dataFim1);
-
         if (!restTudo) {
+
+            String data_parte1 = dataRestInicio.substring(0, 2); //pega o mês
+            String data_parte2 = dataRestInicio.substring(2, 6); //pega o ano
+            String dataFim1 = dataRestFim.substring(0, 2); //pega o mês
+            String dataFim2 = dataRestFim.substring(2, 6); //pega o ano
+
+            int dataInicio_manipulada = Integer.parseInt(data_parte2 + data_parte1);
+            int dataFim_manipulada = Integer.parseInt(dataFim2 + dataFim1);
 
             List<RestricoesBB> listRestricoesBB2 = new ArrayList<>();
 
@@ -483,17 +522,16 @@ public class CapturaBloqueioRestricao {
 
                     bc.setDtaPostagem(sisbb.copiar(8, 4, 77).trim());
                     bc.setServicoECT(sisbb.copiar(11, 4, 77).trim());
-                  
+
                     String parte1 = sisbb.copiar(18, 36, 44).trim();
                     String parte2 = sisbb.copiar(19, 4, 76).trim();
                     String parte3 = sisbb.copiar(20, 4, 76).trim();
-                    
-                    
+
                     if (!parte1.equals("")) {
                         bc.setEndereco(parte1 + ", " + parte2 + ", " + parte3);
-                    }else{
-                        bc.setEndereco("");                         
-                        
+                    } else {
+                        bc.setEndereco("");
+
                     }
                     listaCorrespondencia.add(bc);
 
@@ -553,7 +591,7 @@ public class CapturaBloqueioRestricao {
                         sisbb.teclarAguardarTroca("@8");
                         Thread.sleep(200);
 
-                        if (sisbb.copiar(22, 3, 4).equals("Mais")) {
+                        if (sisbb.copiar(22, 3, 4).equals("Mais") || sisbb.copiar(22, 4, 4).equals("Mais")) {
                             Thread.sleep(200);
 
                             sisbb.colar(22, 38, "s");
@@ -582,15 +620,15 @@ public class CapturaBloqueioRestricao {
 
         }
 
-        String data_parte1 = dataRestInicio.substring(0, 2); //pega o mês
-        String data_parte2 = dataRestInicio.substring(2, 6); //pega o ano
-        String dataFim1 = dataRestFim.substring(0, 2); //pega o mês
-        String dataFim2 = dataRestFim.substring(2, 6); //pega o ano
-
-        int dataInicio_manipulada = Integer.parseInt(data_parte2 + data_parte1);
-        int dataFim_manipulada = Integer.parseInt(dataFim2 + dataFim1);
-
         if (!restTudo) {
+
+            String data_parte1 = dataRestInicio.substring(0, 2); //pega o mês
+            String data_parte2 = dataRestInicio.substring(2, 6); //pega o ano
+            String dataFim1 = dataRestFim.substring(0, 2); //pega o mês
+            String dataFim2 = dataRestFim.substring(2, 6); //pega o ano
+
+            int dataInicio_manipulada = Integer.parseInt(data_parte2 + data_parte1);
+            int dataFim_manipulada = Integer.parseInt(dataFim2 + dataFim1);
 
             List<RestricoesReplicadas> listRestricoesRep = new ArrayList<>();
 
@@ -611,8 +649,8 @@ public class CapturaBloqueioRestricao {
         return listaReplicadas;
 
     }
-    
-     public List restricoesTerceiros(JanelaSisbb sisbb, String cpf, String dataRestFim, String dataRestInicio, boolean restTudo) throws RoboException, InterruptedException {
+
+    public List restricoesTerceiros(JanelaSisbb sisbb, String cpf, String dataRestFim, String dataRestInicio, boolean restTudo) throws RoboException, InterruptedException {
 
         List<RestricoesTerceiros> listRestricoesTerceiros = new ArrayList<>();
         int linhaTipoRestricao = 14;
@@ -624,194 +662,11 @@ public class CapturaBloqueioRestricao {
 
         do {
 
-            if (restTudo) {
-
-                if (!sisbb.copiar(linhaTipoRestricao, 39, 18).trim().equals("Nada consta")) {
-
-                    opcao = sisbb.copiar(linhaTipoRestricao, 4, 1);
-                    sisbb.colar(21, 24, opcao);
-                    sisbb.teclarAguardarTroca("@E");
-
-                    int linha_rest = 10;
-
-                    do {
-
-                        RestricoesTerceiros res = new RestricoesTerceiros();
-
-                        if (sisbb.copiar(linha_rest, 42, 5).contains("RELAT") || sisbb.copiar(linha_rest, 42, 5).contains("ABSOL")) {
-
-                            if (!sisbb.copiar(10, 6, 3).equals("CCF")) {
-                                res.setTipo(sisbb.copiar(linha_rest, 17, 24).trim());
-
-                            } else {
-                                String tipo = sisbb.copiar(linha_rest, 6, 3);
-                                String cheques = sisbb.copiar(linha_rest, 17, 24).trim();
-                                String ccf = tipo.concat(" " + cheques);
-                                res.setTipo(ccf);
-
-                            }
-
-                            res.setDtaRegistro(sisbb.copiar(linha_rest, 48, 10));
-                            res.setDtaBaixa(sisbb.copiar(linha_rest, 71, 10));
-
-                            listRestricoesTerceiros.add(res);
-
-                        }
-
-                        if (linha_rest == 19) {
-
-                            Thread.sleep(100);
-                            sisbb.teclarAguardarTroca("@8");
-                            Thread.sleep(200);
-
-                            if (sisbb.copiar(22, 3, 4).equals("Mais")) {
-                                Thread.sleep(200);
-
-                                sisbb.colar(22, 38, "s");
-                                Thread.sleep(300);
-                                sisbb.teclar("@E");
-                                Thread.sleep(200);
-
-                            }
-
-                            linha_rest = 9;
-
-                        }
-
-                        linha_rest++;
-
-                    } while (!sisbb.copiar(linha_rest, 17, 5).equals("") & !sisbb.copiar(23, 3, 6).equals("Última"));
-
-                }
-
-                if (!sisbb.copiar(1, 3, 8).equals("ACPM140B")) {
-                    sisbb.teclarAguardarTroca("@3");
-
-                }
-
-                if (sisbb.copiar(linhaTipoRestricao + 1, 6, 20).trim().equals("BACEN")) {
-
-                    linhaTipoRestricao += 2;
-
-                } else {
-
-                    linhaTipoRestricao++;
-                }
-
-            } else {
-
-                if (!sisbb.copiar(linhaTipoRestricao, 39, 18).trim().equals("Nada consta")) {
-
-                    opcao = sisbb.copiar(linhaTipoRestricao, 4, 1);
-                    sisbb.colar(21, 24, opcao);
-                    sisbb.teclarAguardarTroca("@E");
-
-                    int linha_rest = 10;
-
-                    int linhaData = 10;
-
-                    String data_parte1 = dataRestInicio.substring(0, 2); //pega o mês
-                    String data_parte2 = dataRestInicio.substring(2, 6); //pega o ano
-                    String dataFim1 = dataRestFim.substring(0, 2); //pega o mês
-                    String dataFim2 = dataRestFim.substring(2, 6); //pega o ano
-
-                    int dataInicio_manipulada = Integer.parseInt(data_parte2 + data_parte1);
-                    int dataFim_manipulada = Integer.parseInt(dataFim2 + dataFim1);
-
-                    do {
-
-                        String data_sisbb = sisbb.copiar(linhaData, 48, 10).replace("/", "");
-                        String data_Sis_parte1 = data_sisbb.substring(2, 4); //pega o dia
-                        String data_Sis_parte2 = data_sisbb.substring(4, 8); //pega o ano
-                        int data_sisbb_manipulada = Integer.parseInt(data_Sis_parte2 + data_Sis_parte1);
-
-                        if (data_sisbb_manipulada < dataInicio_manipulada) {
-                            break;
-
-                        }
-
-                        RestricoesTerceiros res = new RestricoesTerceiros();
-
-                        if ((data_sisbb_manipulada <= dataFim_manipulada && data_sisbb_manipulada >= dataInicio_manipulada) && (sisbb.copiar(linha_rest, 42, 5).contains("RELAT") || sisbb.copiar(linha_rest, 42, 5).contains("ABSOL"))) {
-
-                            if (!sisbb.copiar(10, 6, 3).equals("CCF")) {
-                                res.setTipo(sisbb.copiar(linha_rest, 17, 24).trim());
-
-                            } else {
-                                String tipo = sisbb.copiar(linha_rest, 6, 3);
-                                String cheques = sisbb.copiar(linha_rest, 17, 24).trim();
-                                String ccf = tipo.concat(" " + cheques);
-                                res.setTipo(ccf);
-
-                            }
-
-                            res.setDtaRegistro(sisbb.copiar(linha_rest, 48, 10));
-                            res.setDtaBaixa(sisbb.copiar(linha_rest, 71, 10));
-
-                            listRestricoesTerceiros.add(res);
-
-                        }
-
-                        if (linha_rest == 19) {
-
-                            Thread.sleep(100);
-                            sisbb.teclarAguardarTroca("@8");
-                            Thread.sleep(100);
-                            linhaData = 9;
-
-                            if (sisbb.copiar(22, 3, 4).equals("Mais")) {
-                                Thread.sleep(200);
-
-                                sisbb.colar(22, 38, "s");
-                                Thread.sleep(300);
-                                sisbb.teclar("@E");
-                                Thread.sleep(200);
-
-                            }
-
-                            linha_rest = 9;
-
-                        }
-
-                        linha_rest++;
-                        linhaData++;
-
-                    } while (!sisbb.copiar(linha_rest, 17, 5).equals("") & !sisbb.copiar(23, 3, 6).equals("Última"));
-
-                }
-
-                if (!sisbb.copiar(1, 3, 8).equals("ACPM140B")) {
-                    sisbb.teclarAguardarTroca("@3");
-
-                }
-
-              
-                    linhaTipoRestricao++;
-                
-
-            }
-
-        } while (!sisbb.copiar(linhaTipoRestricao, 6, 4).equals(""));
-        
-        
-         sisbb.teclarAguardarTroca("@3");
-         sisbb.aguardarInd(1, 3, "MCIM100F");
-         sisbb.teclarAguardarTroca("@3");
-         sisbb.aguardarInd(1, 3, "MCIM001A");
-         sisbb.teclarAguardarTroca("@3");
-         sisbb.aguardarInd(1, 3, "MCIM0000");
-         sisbb.teclarAguardarTroca("@3");
-         sisbb.aguardarInd(1, 3, "SBBP6130");
-         sisbb.colar(21, 20, "02");
-         sisbb.teclarAguardarTroca("@E");
-         sisbb.colar(18, 18, "15");
-         sisbb.colar(19, 18, cpf);
-         sisbb.teclarAguardarTroca("@E");
-         
-
- if (!sisbb.copiar(23, 7, 5).equals("foram")) {
-
-               // sisbb.aguardarInd(1, 3, "ACPM14AB");
+            if (!sisbb.copiar(linhaTipoRestricao, 39, 18).trim().equals("Nada consta")) {
+
+                opcao = sisbb.copiar(linhaTipoRestricao, 4, 1);
+                sisbb.colar(21, 24, opcao);
+                sisbb.teclarAguardarTroca("@E");
 
                 int linha_rest = 10;
 
@@ -819,11 +674,21 @@ public class CapturaBloqueioRestricao {
 
                     RestricoesTerceiros res = new RestricoesTerceiros();
 
-                    if ((sisbb.copiar(linha_rest, 37, 4).contains("RELA")) || sisbb.copiar(linha_rest, 37, 4).contains("ABSO")) {
+                    if (sisbb.copiar(linha_rest, 42, 5).contains("RELAT") || sisbb.copiar(linha_rest, 42, 5).contains("ABSOL")) {
 
-                        res.setTipo(sisbb.copiar(linha_rest, 17, 19).trim());
-                        res.setDtaRegistro(sisbb.copiar(linha_rest, 42, 10).trim());
-                        res.setDtaBaixa(sisbb.copiar(linha_rest, 62, 10));
+                        if (!sisbb.copiar(10, 6, 3).equals("CCF")) {
+                            res.setTipo(sisbb.copiar(linha_rest, 17, 24).trim());
+
+                        } else {
+                            String tipo = sisbb.copiar(linha_rest, 6, 3);
+                            String cheques = sisbb.copiar(linha_rest, 17, 24).trim();
+                            String ccf = tipo.concat(" " + cheques);
+                            res.setTipo(ccf);
+
+                        }
+
+                        res.setDtaRegistro(sisbb.copiar(linha_rest, 48, 10));
+                        res.setDtaBaixa(sisbb.copiar(linha_rest, 71, 10));
 
                         listRestricoesTerceiros.add(res);
 
@@ -831,22 +696,15 @@ public class CapturaBloqueioRestricao {
 
                     if (linha_rest == 19) {
 
-                        if (sisbb.copiar(1, 3, 8).equals("ACPM14BB")) {
-                            sisbb.teclarAguardarTroca("@3");
-                            Thread.sleep(200);
-                            sisbb.colar(21, 24, "  ");
-
-                        }
-
-                        Thread.sleep(200);
+                        Thread.sleep(100);
                         sisbb.teclarAguardarTroca("@8");
                         Thread.sleep(200);
 
-                        if (sisbb.copiar(22, 3, 4).equals("Mais")) {
+                        if (sisbb.copiar(22, 3, 4).equals("Mais") || sisbb.copiar(22, 4, 4).equals("Mais")) {
                             Thread.sleep(200);
 
                             sisbb.colar(22, 38, "s");
-                            Thread.sleep(200);
+                            Thread.sleep(300);
                             sisbb.teclar("@E");
                             Thread.sleep(200);
 
@@ -858,28 +716,184 @@ public class CapturaBloqueioRestricao {
 
                     linha_rest++;
 
-                    if (sisbb.copiar(1, 3, 8).equals("ACPM14BB")) {
-                        sisbb.teclarAguardarTroca("@3");
-                        Thread.sleep(100);
-                        sisbb.colar(21, 24, "  ");
-
-                    }
-
                 } while (!sisbb.copiar(linha_rest, 17, 5).equals("") & !sisbb.copiar(23, 3, 6).equals("Última"));
 
             }
 
+            if (!sisbb.copiar(1, 3, 8).equals("ACPM140B")) {
+                sisbb.teclarAguardarTroca("@3");
 
-        
-        
-        
-        
-        
-        
-        
-        
+            }
+
+            if (sisbb.copiar(linhaTipoRestricao + 1, 6, 20).trim().equals("BACEN")) {
+
+                linhaTipoRestricao += 2;
+
+            } else {
+
+                linhaTipoRestricao++;
+            }
+
+        } while (!sisbb.copiar(linhaTipoRestricao, 6, 4).equals(""));
+
+        sisbb.teclarAguardarTroca("@3");
+        sisbb.aguardarInd(1, 3, "MCIM100F");
+        sisbb.teclarAguardarTroca("@3");
+        sisbb.aguardarInd(1, 3, "MCIM001A");
+        sisbb.teclarAguardarTroca("@3");
+        sisbb.aguardarInd(1, 3, "MCIM0000");
+        sisbb.teclarAguardarTroca("@3");
+        sisbb.aguardarInd(1, 2, "SBBP6130");//aqui
+
+        sisbb.colar(21, 20, "02");
+        sisbb.teclarAguardarTroca("@E");
+        sisbb.colar(18, 18, "15");
+        sisbb.colar(19, 18, cpf);
+        sisbb.teclarAguardarTroca("@E");
+
+        if (!sisbb.copiar(23, 7, 5).equals("foram")) {
+
+            // sisbb.aguardarInd(1, 3, "ACPM14AB");
+            int linha_rest = 10;
+
+            do {
+
+                RestricoesTerceiros res = new RestricoesTerceiros();
+
+                if ((sisbb.copiar(linha_rest, 37, 4).contains("RELA")) || sisbb.copiar(linha_rest, 37, 4).contains("ABSO")) {
+
+                    res.setTipo(sisbb.copiar(linha_rest, 17, 19).trim());
+                    res.setDtaRegistro(sisbb.copiar(linha_rest, 42, 10).trim());
+                    res.setDtaBaixa(sisbb.copiar(linha_rest, 62, 10));
+
+                    listRestricoesTerceiros.add(res);
+
+                }
+
+                if (linha_rest == 19) {
+
+                    if (sisbb.copiar(1, 3, 8).equals("ACPM14BB")) {
+                        sisbb.teclarAguardarTroca("@3");
+                        Thread.sleep(200);
+                        sisbb.colar(21, 24, "  ");
+
+                    }
+
+                    Thread.sleep(200);
+                    sisbb.teclarAguardarTroca("@8");
+                    Thread.sleep(200);
+
+                    if (sisbb.copiar(22, 3, 4).equals("Mais") || sisbb.copiar(22, 4, 4).equals("Mais")) {
+                        Thread.sleep(200);
+
+                        sisbb.colar(22, 39, "s");
+                        Thread.sleep(200);
+                        sisbb.teclar("@E");
+                        Thread.sleep(200);
+
+                    }
+
+                    linha_rest = 9;
+
+                }
+
+                linha_rest++;
+
+                if (sisbb.copiar(1, 3, 8).equals("ACPM14BB")) {
+                    sisbb.teclarAguardarTroca("@3");
+                    Thread.sleep(100);
+                    sisbb.colar(21, 24, "  ");
+
+                }
+
+            } while (!sisbb.copiar(linha_rest, 17, 5).equals("") & !sisbb.copiar(23, 3, 6).equals("Última"));
+
+        }
+
+        if (!restTudo) {
+
+            String data_parte1 = dataRestInicio.substring(0, 2); //pega o mês
+            String data_parte2 = dataRestInicio.substring(2, 6); //pega o ano
+            String dataFim1 = dataRestFim.substring(0, 2); //pega o mês
+            String dataFim2 = dataRestFim.substring(2, 6); //pega o ano
+
+            int dataInicio_manipulada = Integer.parseInt(data_parte2 + data_parte1);
+            int dataFim_manipulada = Integer.parseInt(dataFim2 + dataFim1);
+
+            List<RestricoesTerceiros> listRestricoesTer = new ArrayList<>();
+
+            for (RestricoesTerceiros r : listRestricoesTerceiros) {
+
+                String data_sisbb = r.getDtaRegistro().replace("/", "");
+                String data_Sis_parte1 = data_sisbb.substring(2, 4); //pega o dia
+                String data_Sis_parte2 = data_sisbb.substring(4, 8); //pega o ano
+                int data_sisbb_manipulada = Integer.parseInt(data_Sis_parte2 + data_Sis_parte1);
+
+                if (data_sisbb_manipulada <= dataFim_manipulada && data_sisbb_manipulada >= dataInicio_manipulada) {
+                    listRestricoesTer.add(r);
+                }
+            }
+            listRestricoesTerceiros = listRestricoesTer;
+        }
 
         return listRestricoesTerceiros;
+
+    }
+
+    public String bloqueioAtivo(String restricaoAtiva, JanelaSisbb sisbb, List<DadosIniciais> listaOperacoesCaptura) throws RoboException {
+
+        int verificacao = 16;
+
+        while (!sisbb.copiar(1, 3, 8).equals("VIP23050")) {
+            sisbb.teclarAguardarTroca("@3");
+
+        }
+
+        for (DadosIniciais t : listaOperacoesCaptura) {
+
+            String cartao = t.getNrCartao().substring(0, 16);
+
+            sisbb.colar(17, 20, "02");
+            sisbb.colar(18, 20, cartao);
+            sisbb.teclarAguardarTroca("@E");
+
+            sisbb.teclarAguardarTroca("@6");
+
+            if (sisbb.copiar(1, 3, 8).equals("VIP0112R")) {
+
+                sisbb.teclarAguardarTroca("@9");
+
+                while (verificacao <= 21) {
+
+                    if (sisbb.copiar(verificacao, 23, 3).equals("007") && sisbb.copiar(verificacao, 63, 3).equals("EXC")) {
+
+                        restricaoAtiva = "Data da baixa: " + sisbb.copiar(verificacao, 6, 10);
+
+                        return restricaoAtiva;
+                    }
+                    verificacao++;
+
+                    if (verificacao == 22) {
+                        sisbb.teclarAguardarTroca("@8");
+                        if (sisbb.copiar(23, 4, 5).equals("ltima")) {
+                            break;
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+            while (!sisbb.copiar(1, 3, 8).equals("VIP23050")) {
+                sisbb.teclarAguardarTroca("@3");
+
+            }
+
+        }
+
+        return restricaoAtiva;
 
     }
 

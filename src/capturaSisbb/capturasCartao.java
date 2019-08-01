@@ -71,6 +71,11 @@ public class capturasCartao {
                 if (linhaCartao == 21) {
                     sisbb.teclarAguardarTroca("@8");
                     linhaCartao = 7;
+                    if(sisbb.copiar(23, 4, 5).equals("ltima")){
+                        break;                    
+                        
+                        
+                    }
                     
                 }
             } while (!sisbb.copiar(linhaCartao, 5, 5).equals(""));
